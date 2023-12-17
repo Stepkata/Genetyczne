@@ -7,18 +7,9 @@ SUBSTRACT: '-';
 MULTIPLY: '*';
 DIVIDE:  '/';
 MOD: '%';
-
-
 EQ: '=';
-
-RANGE: '..';
-IN: 'in';
-
-COLON: ':';
-COMA : ',';
 LPAREN: '(';
 RPAREN: ')';
-
 LCURL: '{';
 RCURL: '}';
 LTHAN: '<';
@@ -28,98 +19,49 @@ NOTEQ: '!=';
 AND: '&&';
 OR: '||';
 
-SINGLE_QUOTE: '\'';
 IF: 'if';
-ELSE: 'else';
-FOR: 'for';
-
-VAL: 'val';
-VAR: 'var';
-
+WHILE: 'while';
 NEWLINE: [\r\n]+ ;
-INT: 'Int';
-DOUBLE: 'Double';
-STRING: 'String';
-BOOLEAN: 'Boolean';
-
+PRINT: 'print';
 IDENTIFIER: ('a'..'z' | 'A'..'Z') ('0'..'9' | 'a'..'z' | 'A'..'Z')*;
 INTLITERAL: ('-'? ('1'..'9')('0'..'9')*) | '0';
-DOUBLELITERAL:  ('0'..'9')+ '.' ('0'..'9')+ ;
-STRINGLITERAL: UNTERMINATEDSTRINGLITERAL '"';
-UNTERMINATEDSTRINGLITERAL : '"' (~["\\\r\n] | '\\' (. | EOF))*;
-BOOLEANLITERAL: 'true' | 'false';
-INTNUMBER: ('0'..'9');
-PRINT: 'print';
-READ: 'read';
-
+INPUT: 'input()';
 
 prog: (expr NEWLINE*)*;
 
-expr: (variable
+expr: (print
     | if_statement
-    | for_loop
-    | NEWLINE
-    | func_call);
+    | variable_assign
+    | while
+    | NEWLINE);
 
 
-variable: variable_assign | variable_declaration;
-variable_declaration: (VAR|VAL) IDENTIFIER COLON typ (EQ literals)?;
-variable_assign: (VAR|VAL)? IDENTIFIER EQ literals;
-
-parameter:  IDENTIFIER COLON typ;
+variable_assign:  IDENTIFIER EQ (literals | INPUT);
+print: PRINT LPAREN literals RPAREN;
 
 operators: MULTIPLY
             | DIVIDE
             | ADD
+            | MOD
             | SUBSTRACT;
-
 
 logic_operators: AND
                 | OR;
 
-numeric_literals: numeric_type operators numeric_type
-        | numeric_type;
-
-text_type: text_type  ADD text_type
-        | STRINGLITERAL
-        | IDENTIFIER;
-
-numeric_type:   INTLITERAL
-              | DOUBLELITERAL
-              | IDENTIFIER;
-
-
-literals:   BOOLEANLITERAL
-        | text_type
-        | numeric_literals
-        | func_call
-        | IDENTIFIER;
+literals: IDENTIFIER | INTLITERAL | literals operators literals;
 
 comparisson_type: EQEQ
           | GTHAN
           | LTHAN
           | NOTEQ;
 
-
-typ:  INT
-    | DOUBLE
-    | STRING
-    | IDENTIFIER
-    | BOOLEAN;
-
-if_statement: IF LPAREN if_body RPAREN LCURL NEWLINE*
+if_statement: IF LPAREN condition RPAREN LCURL NEWLINE*
                 expr* NEWLINE*
-                RCURL NEWLINE*  (ELSE if_statement |
-                         ELSE LCURL NEWLINE* expr* RCURL NEWLINE* )?;
+                RCURL;
 
-if_body: literals comparisson_type literals
-        | if_body logic_operators if_body;
+condition: literals comparisson_type literals
+        | condition logic_operators condition;
 
-
-for_loop_condition: INTLITERAL  RANGE  INTLITERAL;
-
-for_loop: FOR LPAREN IDENTIFIER IN for_loop_condition RPAREN LCURL NEWLINE*
-            expr*
-            RCURL;
-
-func_call: ( PRINT LPAREN (IDENTIFIER| text_type+) RPAREN )| (READ LPAREN IDENTIFIER RPAREN);
+while: WHILE LPAREN  condition RPAREN LCURL NEWLINE*
+        expr* NEWLINE*
+        RCURL;

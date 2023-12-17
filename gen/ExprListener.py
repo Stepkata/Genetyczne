@@ -1,4 +1,4 @@
-# Generated from C:/Users/keste/PycharmProjects/Genetyczne/Expr.g4 by ANTLR 4.13.1
+# Generated from Expr.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .ExprParser import ExprParser
@@ -26,24 +26,6 @@ class ExprListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by ExprParser#variable.
-    def enterVariable(self, ctx:ExprParser.VariableContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#variable.
-    def exitVariable(self, ctx:ExprParser.VariableContext):
-        pass
-
-
-    # Enter a parse tree produced by ExprParser#variable_declaration.
-    def enterVariable_declaration(self, ctx:ExprParser.Variable_declarationContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#variable_declaration.
-    def exitVariable_declaration(self, ctx:ExprParser.Variable_declarationContext):
-        pass
-
-
     # Enter a parse tree produced by ExprParser#variable_assign.
     def enterVariable_assign(self, ctx:ExprParser.Variable_assignContext):
         pass
@@ -53,12 +35,12 @@ class ExprListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by ExprParser#parameter.
-    def enterParameter(self, ctx:ExprParser.ParameterContext):
+    # Enter a parse tree produced by ExprParser#print.
+    def enterPrint(self, ctx:ExprParser.PrintContext):
         pass
 
-    # Exit a parse tree produced by ExprParser#parameter.
-    def exitParameter(self, ctx:ExprParser.ParameterContext):
+    # Exit a parse tree produced by ExprParser#print.
+    def exitPrint(self, ctx:ExprParser.PrintContext):
         pass
 
 
@@ -80,33 +62,6 @@ class ExprListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by ExprParser#numeric_literals.
-    def enterNumeric_literals(self, ctx:ExprParser.Numeric_literalsContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#numeric_literals.
-    def exitNumeric_literals(self, ctx:ExprParser.Numeric_literalsContext):
-        pass
-
-
-    # Enter a parse tree produced by ExprParser#text_type.
-    def enterText_type(self, ctx:ExprParser.Text_typeContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#text_type.
-    def exitText_type(self, ctx:ExprParser.Text_typeContext):
-        pass
-
-
-    # Enter a parse tree produced by ExprParser#numeric_type.
-    def enterNumeric_type(self, ctx:ExprParser.Numeric_typeContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#numeric_type.
-    def exitNumeric_type(self, ctx:ExprParser.Numeric_typeContext):
-        pass
-
-
     # Enter a parse tree produced by ExprParser#literals.
     def enterLiterals(self, ctx:ExprParser.LiteralsContext):
         pass
@@ -125,15 +80,6 @@ class ExprListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by ExprParser#typ.
-    def enterTyp(self, ctx:ExprParser.TypContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#typ.
-    def exitTyp(self, ctx:ExprParser.TypContext):
-        pass
-
-
     # Enter a parse tree produced by ExprParser#if_statement.
     def enterIf_statement(self, ctx:ExprParser.If_statementContext):
         pass
@@ -143,39 +89,21 @@ class ExprListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by ExprParser#if_body.
-    def enterIf_body(self, ctx:ExprParser.If_bodyContext):
+    # Enter a parse tree produced by ExprParser#condition.
+    def enterCondition(self, ctx:ExprParser.ConditionContext):
         pass
 
-    # Exit a parse tree produced by ExprParser#if_body.
-    def exitIf_body(self, ctx:ExprParser.If_bodyContext):
-        pass
-
-
-    # Enter a parse tree produced by ExprParser#for_loop_condition.
-    def enterFor_loop_condition(self, ctx:ExprParser.For_loop_conditionContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#for_loop_condition.
-    def exitFor_loop_condition(self, ctx:ExprParser.For_loop_conditionContext):
+    # Exit a parse tree produced by ExprParser#condition.
+    def exitCondition(self, ctx:ExprParser.ConditionContext):
         pass
 
 
-    # Enter a parse tree produced by ExprParser#for_loop.
-    def enterFor_loop(self, ctx:ExprParser.For_loopContext):
+    # Enter a parse tree produced by ExprParser#while.
+    def enterWhile(self, ctx:ExprParser.WhileContext):
         pass
 
-    # Exit a parse tree produced by ExprParser#for_loop.
-    def exitFor_loop(self, ctx:ExprParser.For_loopContext):
-        pass
-
-
-    # Enter a parse tree produced by ExprParser#func_call.
-    def enterFunc_call(self, ctx:ExprParser.Func_callContext):
-        pass
-
-    # Exit a parse tree produced by ExprParser#func_call.
-    def exitFunc_call(self, ctx:ExprParser.Func_callContext):
+    # Exit a parse tree produced by ExprParser#while.
+    def exitWhile(self, ctx:ExprParser.WhileContext):
         pass
 
 
