@@ -36,7 +36,7 @@ expr: (print
     | NEWLINE);
 
 
-variable_assign:  IDENTIFIER EQ (literals | INPUT);
+variable_assign:  IDENTIFIER EQ literals | IDENTIFIER EQ INPUT;
 print: PRINT LPAREN literals RPAREN;
 
 operators: MULTIPLY

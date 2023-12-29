@@ -1,6 +1,12 @@
+class Node:
+    def __init__(self, name, children, cont):
+        self.children = children
+        self.name = name
+        self.contains = cont
+
 class BiggerGP:
     def __init__(self, p_size: int = 25000, depth: int = 5):
-        self.MAX_LEN: int = 10000
+        self.MAX_LEN: int = 32
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
         self.GENERATIONS: int = 50
