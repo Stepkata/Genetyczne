@@ -12,33 +12,6 @@ class BiggerGP:
         self.pop_fitness = []
         self.population = []
 
-        self.TERMINALS = {
-            'ADD':          '+',
-            'SUBSTRACT':    '-',
-            'MULTIPLY':     '*',
-            'DIVIDE':       '/',
-            'MOD':          '%',
-            'EQ':           '=',
-            'LPAREN':       '(',
-            'RPAREN':       ')',
-            'LCURL':        '{',
-            'RCURL':        '}',
-            'LTHAN':        '<',
-            'GTHAN':        '>',
-            'EQEQ':         '==',
-            'NOTEQ':        '!=',
-            'AND':          '&&',
-            'OR':           '||',
-            'IF':           'if',
-            'WHILE':        'while',
-            'NEWLINE':      '\n',
-            'PRINT':        'print',
-            'IDENTIFIER':   'IDENTIFIER',
-            'INTLITERAL':   'INTLITERAL',
-            'INPUT':        'input()',
-            'DOT':        '.'
-        }
-
         self.terminal_table = {
                                100:  '+',
                                200:  '-',
@@ -66,17 +39,17 @@ class BiggerGP:
                                2400: '.'}
 
         self.grammar = {
-            0: [[1, 1900]],
-            1: [[3, 2400, 1900], [8, 2400, 1900], [2, 2400, 1900], [10, 2400, 1900], [1900]],
-            2: [[2100, 600, 6], [2100, 600, 2300]],
-            3: [[2000, 700, 6, 800]],
-            4: [[300], [400], [100], [500], [200]],
-            5: [[1500], [1600]],
-            6: [[2100], [2200], [6, 4, 6]],
-            7: [[1300], [1200], [1100], [1400]],
-            8: [[1700, 700, 9, 800, 900, 1900, 1, 1900, 1000]],
-            9: [[6, 7, 6], [9, 5, 9]],
-            10: [[1800, 700, 9, 800, 900, 1900, 1, 1900, 1000]]
+            0: [[1, 1900]], # 'prog': ['expr NEWLINE'],
+            1: [[3, 2400, 1900], [8, 2400, 1900], [2, 2400, 1900], [10, 2400, 1900], [1900]], # 'expr': ['print COLON NEWLINE', 'if_statement COLON NEWLINE', 'variable_assign COLON NEWLINE', 'while COLON NEWLINE', 'NEWLINE'],
+            2: [[2100, 600, 6], [2100, 600, 2300]], # 'variable_assign': ['IDENTIFIER EQ literals', 'IDENTIFIER EQ INPUT'],
+            3: [[2000, 700, 6, 800]], # 'print': ['PRINT LPAREN literals RPAREN'],
+            4: [[300], [400], [100], [500], [200]], # 'operators': ['MULTIPLY', 'DIVIDE', 'ADD', 'MOD', 'SUBSTRACT'],
+            5: [[1500], [1600]], # 'logic_operators': ['AND', 'OR'],
+            6: [[2100], [2200], [6, 4, 6]], #  'literals': ['IDENTIFIER', 'INTLITERAL', 'literals operators literals'],
+            7: [[1300], [1200], [1100], [1400]], # 'comparisson_type': ['EQEQ', 'GTHAN', 'LTHAN', 'NOTEQ'],
+            8: [[1700, 700, 9, 800, 900, 1900, 1, 1900, 1000]], # 'if_statement': ['IF LPAREN condition RPAREN LCURL NEWLINE expr NEWLINE RCURL'],
+            9: [[6, 7, 6], [9, 5, 9]], # 'condition': ['literals comparisson_type literals', 'condition logic_operators condition'],
+            10: [[1800, 700, 9, 800, 900, 1900, 1, 1900, 1000]] # 'while': ['WHILE LPAREN  condition RPAREN LCURL NEWLINE  expr NEWLINE  RCURL']
         }
 
         self.start: int = 1  # expr
@@ -85,23 +58,24 @@ class BiggerGP:
         self.intliterals = {}
 
     def generate_random_individual(self):
-        variables = []
+        variables_buffer = []
 
         buffer = []
         for i in range(random.randint(1, self.MAX_LEN)):  # create the base length of program
             buffer.append(self.start)
 
+        print(buffer)
         for i in range(self.DEPTH - 1):  # grow the tree
             pom = []
             for rule in buffer:
                 if rule in self.grammar.keys():
                     new_rule = random.choice(self.grammar[rule])
-                    if new_rule == 2100 and len(variables) == 0: # we can't use variables we didn't create
+                    if new_rule == 2100 and len(variables_buffer) == 0: # we can't use variables we didn't create
                         new_rule = 2200
                     if rule == 2:
-                        index = len(self.variables) + 1000
+                        index = len(self.variables) + 10000
                         self.variables[index] = random.choice(string.ascii_letters) # if we are creating variable, add its name to register
-                        variables.append(index)
+                        variables_buffer.append(index)
 
                     pom.append(new_rule)
                 else:
@@ -116,6 +90,7 @@ class BiggerGP:
                     buffer += rule
                 else:
                     buffer.append(rule)
+            print(buffer)
 
         pom = [] # make sure we do not create any more nodes
         for rule in buffer:
@@ -123,13 +98,14 @@ class BiggerGP:
                 new_rule = random.choice(self.grammar[rule])
                 while self.start in new_rule:
                     new_rule = random.choice(self.grammar[rule])
-                if new_rule == 2100 and len(variables) == 0:  # we can't use variables we didn't create
+                if new_rule == 2100 and len(variables_buffer) == 0:  # we can't use variables we didn't create
                     new_rule = 2200
                 if rule == 2:
                     index = len(self.variables) + 1000
                     self.variables[index] = random.choice(
                         string.ascii_letters)  # if we are creating variable, add its name to register
-                    variables.append(index)
+                    variables_buffer.append(index)
+
                 pom.append(new_rule)
             else:
                 pom.append(rule)
@@ -139,19 +115,20 @@ class BiggerGP:
                 buffer += rule
             else:
                 buffer.append(rule)
+        print(buffer)
 
         while any(number < 100 for number in buffer): # reach terminals
             pom = []
             for rule in buffer:
                 if rule in self.grammar.keys():
                     new_rule = random.choice(self.grammar[rule])
-                    if new_rule == 2100 and len(variables) == 0:  # we can't use variables we didn't create
+                    if new_rule == 2100 and len(variables_buffer) == 0:  # we can't use variables we didn't create
                         new_rule = 2200
                     if rule == 2:
                         index = len(self.variables) + 1000
                         self.variables[index] = random.choice(
                             string.ascii_letters)  # if we are creating variable, add its name to register
-                        variables.append(index)
+                        variables_buffer.append(index)
                     pom.append(new_rule)
                 else:
                     pom.append(rule)
@@ -161,13 +138,15 @@ class BiggerGP:
                     buffer += rule
                 else:
                     buffer.append(rule)
+        print(buffer)
 
         for i in range(len(buffer)): # choose some ints
             if buffer[i] == 2200:
-                index = len(self.intliterals) + 10000
+                index = len(self.intliterals) + 100000
                 self.intliterals[index] = random.randint(0, 100) #can be changed
                 buffer[i] = index
 
+        print(buffer)
         self.to_string(buffer)
         return buffer
 
