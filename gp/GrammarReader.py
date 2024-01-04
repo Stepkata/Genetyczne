@@ -3,6 +3,9 @@ import random
 
 
 class GrammarReader:
+    '''Class meant to read and process small grammars. It will recognise rules that create terminals (self.terminals)
+      and separate them from grammar (self.rules). It will then assign int numbers to each rule (self.TERMINAL_NUMBERS, self.RULE_NUMBERS)
+      and create grammar rules from them for space optimisation, as well as give look-up table with terminals to use in syntax creation'''
     def __init__(self):
         self.terminals = {}
         self.rules = {}
@@ -11,11 +14,10 @@ class GrammarReader:
         self.RULE_NUMBERS = {}
         self.GRAMMAR = {}
 
-    def read_grammar(self, filename):
+    def read_grammar(self, filename) -> None:
         with open(filename, "r") as f:
             data = f.read()
             data = re.sub(r'\n', '', data)
-            data = re.sub(r'\*', '', data)
             data = re.sub(r' {4}', " ", data)
             lines = data.split(";")
             for line in lines:
@@ -23,8 +25,12 @@ class GrammarReader:
                     continue
                 (left, right) = line.split(":")
                 if left.isupper():
+                    right = re.sub("([' ])", "", right)
+                    if len(right) > 1:
+                        right =  re.sub(r'\*', '', right)
                     self.terminals[left] = re.sub("([' ])", "", right)
                 else:
+                    right =  re.sub(r'\*', '', right)
                     rules = right.split("|")
                     buffer = []
                     for rule in rules:
@@ -39,11 +45,15 @@ class GrammarReader:
             self.RULE_NUMBERS = {rule : i for i, rule in enumerate(self.rules.keys())}
 
     def get_start_rule(self) -> str:
-        return list(self.rules.keys())[1]
+        ''' returns the beginning rule of the grammar. We ignore the prog: expr rule as it can be simplified'''
+        first = list(self.rules.keys())[0]
+        if len(self.rules[first]) == 1:
+            return list(self.rules.keys())[1]
+        else:
+            return first
 
-    def check(self):
-        pass
-    def process(self):
+    def get_processed_grammar(self) -> dict:
+        ''' returns grammar consisting only of int numbers, based on self.TERMINAL_NUMBERS and self.RULE_NUMBERS'''
         buff = {}
         for (rule, term) in self.rules.items():
             pom = []
@@ -58,118 +68,27 @@ class GrammarReader:
                 pom.append(help)
             buff[self.RULE_NUMBERS[rule]] = pom
         print(buff)
+        return buff
+    
+    def get_terminal_table(self) -> dict:
+        ''' returns terminal lookup table for future parsing '''
+        buff = {}
+        for (key, item) in self.TERMINAL_NUMBERS.items():
+            buff[item] = self.terminals[key]
+        print(buff)
+        return buff
 
-
-    def get_fset(self) -> dict:
-        fset = {}
-        start = self.get_start_rule()
-        pom_creat = 100
-        pom_term = 200
-
-        for rule in self.rules.keys():
-            for term in self.rules[rule]:
-                if start in term:
-                    fset[rule] = pom_creat
-                    pom_creat += 1
-                    break
-                else:
-                    fset[rule] = pom_term
-                    pom_term += 1
-        return fset
-
-    def generate_grammar(self, n, maxlen):
-        fset = self.get_fset()
-        start = self.get_start_rule()
-
-        buffer = []
-        for i in range(random.randint(1, maxlen)):  # create the base length of program
-            buffer.append(self.get_start_rule())
-        print(buffer)
-
-        for i in range(n - 1):  # grow the tree
-            pom = []
-            for rule in buffer:
-                if rule in self.rules.keys():
-                    pom.append(random.choice(self.rules[rule]))
-                else:
-                    pom.append(rule)
-            buffer = []
-            for rule in pom:
-                split = rule.split(" ")
-                if start in split and len(buffer) < maxlen:
-                    index = split.index(start)
-                    for i in range(random.randint(1, maxlen - len(buffer))):
-                        split.insert(index, start)
-                buffer += split
-            print(buffer)
-
-        pom = []
-        for rule in buffer:  # make sure all the nodes of the tree can be transformed into literals next iteration
-            if rule in self.rules.keys():
-                if rule == self.get_start_rule():
-                    new_rule = random.choice(self.rules[rule])
-                    while new_rule in self.rules.keys() and fset[new_rule] < 200:
-                        new_rule = random.choice(self.rules[rule])
-                    pom.append(new_rule)
-                else:
-                    pom.append(random.choice(self.rules[rule]))
-            else:
-                pom.append(rule)
-        buffer = []
-        for rule in pom:
-            buffer += rule.split(" ")
-        print(buffer)
-
-        while any(rule.islower() for rule in buffer):  # reach all terminals
-            pom = []
-            for rule in buffer:
-                if rule in self.rules.keys():
-                    pom.append(random.choice(self.rules[rule]))
-                else:
-                    pom.append(rule)
-            buffer = []
-            for rule in pom:
-                buffer += rule.split(" ")
-            print(buffer)
-
-        pom = []
-        for term in buffer:  # translate terminals
-            if term in self.terminals.keys():
-                pom.append(self.terminals[term])
-            elif len(term) > 0:
-                pom.append(term)
-        print(pom)
-
-        return buffer
-
-    def crossover(self):
-        obj1 = self.generate_grammar(3, 3)
-        obj2 = self.generate_grammar(3, 3)
-        print("\n\n")
-        print(obj1)
-        print(obj2)
-        print("\n\n")
-        indexes1 = [index for index, value in enumerate(obj1) if value == 'COLON']
-        indexes2 = [index for index, value in enumerate(obj2) if value == 'COLON']
-        index1 = random.choice(indexes1)
-        index2 = random.choice(indexes2)
-        if len(obj2) - 1 == index2:
-            print(obj1[:index1] + obj2)
-        elif index1 == 0:
-            print(obj1 + obj2[index2:])
-        else:
-            print(obj1[:index1] + obj2[index2:])
 
 
 if __name__ == "__main__":
     g = GrammarReader()
-    g.read_grammar("C:\\Users\\keste\\PycharmProjects\\Genetyczne\\Expr.g4")
-    #print(g.get_start_rule())
-    #print(g.get_fset())
+    g.read_grammar("C:\\Users\\keste\\Genetyczne\\Expr.g4")
     print("\n\n")
     print(g.TERMINAL_NUMBERS)
     print(g.RULE_NUMBERS)
-    #g.generate_grammar(3, 5)
     print("\n\n")
-    g.process()
-    #g.crossover()
+    g.get_processed_grammar()
+    print("\n\n")
+    g.get_terminal_table()
+    print("\n\n")
+    print(g.get_start_rule())
