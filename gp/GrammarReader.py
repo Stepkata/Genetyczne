@@ -5,14 +5,16 @@ import random
 class GrammarReader:
     '''Class meant to read and process small grammars. It will recognise rules that create terminals (self.terminals)
       and separate them from grammar (self.rules). It will then assign int numbers to each rule (self.TERMINAL_NUMBERS, self.RULE_NUMBERS)
-      and create grammar rules from them for space optimisation, as well as give look-up table with terminals to use in syntax creation'''
-    def __init__(self):
-        self.terminals = {}
-        self.rules = {}
+      and create grammar rules from them for space optimisation, as well as give look-up table with terminals to use in syntax creation.
+      It takes one parameter (self.terminal_start) to control the avaliable scope for assigning numbers to rules'''
+    def __init__(self, terminal_start: int = 100):
+        self.terminal_start: int = terminal_start
+        self.terminals: dict = {}
+        self.rules: dict = {}
 
-        self.TERMINAL_NUMBERS = {}
-        self.RULE_NUMBERS = {}
-        self.GRAMMAR = {}
+        self.TERMINAL_NUMBERS: dict = {}
+        self.RULE_NUMBERS: dict = {}
+        self.GRAMMAR: dict = {}
 
     def read_grammar(self, filename) -> None:
         with open(filename, "r") as f:
@@ -41,7 +43,7 @@ class GrammarReader:
 
             print("TERMINALS:", self.terminals)
             print("RULES:", self.rules)
-            self.TERMINAL_NUMBERS = {terminal: i*100 for i, terminal in enumerate(self.terminals.keys())}
+            self.TERMINAL_NUMBERS = {terminal: i*self.terminal_start for i, terminal in enumerate(self.terminals.keys())}
             self.RULE_NUMBERS = {rule : i for i, rule in enumerate(self.rules.keys())}
 
     def get_start_rule(self) -> str:

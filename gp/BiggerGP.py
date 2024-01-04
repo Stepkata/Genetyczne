@@ -4,6 +4,7 @@ import string
 
 
 class BiggerGP:
+    ''' Class executing genetic algorithm using simple custom programming language'''
     def __init__(self, p_size: int = 25000, depth: int = 3):
         self.MAX_LEN: int = 5
         self.POP_SIZE: int = p_size
@@ -12,8 +13,8 @@ class BiggerGP:
         self.MATCH_SIZE: int = 2
         self.MUTATION_RATE: int = 5
 
-        self.pop_fitness = []
-        self.population = []
+        self.pop_fitness: list = []
+        self.population: list = []
 
         self.terminal_table = {
             100: '+',
@@ -56,12 +57,12 @@ class BiggerGP:
         }
 
         self.start: int = 1  # expr
-        self.node_end = 2400  # dot
-        self.variables = {}
-        self.intliterals = {}
-        self.variables_buffer = []
+        self.node_end: int = 2400  # dot
+        self.variables: dict = {}
+        self.intliterals: dict = {}
+        self.variables_buffer: list = []
 
-    def traverse(self, buffer):
+    def traverse(self, buffer) -> list:
         pom = []
         for rule in buffer:
             if rule in self.grammar.keys():
@@ -83,7 +84,7 @@ class BiggerGP:
         print(buffer)
         return buffer
 
-    def check_new_rule(self, buffer, new_rule, rule):
+    def check_new_rule(self, buffer, new_rule, rule) -> list:
         if new_rule == [2100]:  # we cannot use variables we didn't declare
             variables_pom = []
             for var in self.variables_buffer:
@@ -103,7 +104,7 @@ class BiggerGP:
             new_rule[new_rule.index(2100)] = index
         return new_rule
 
-    def generate_random_individual(self):
+    def generate_random_individual(self) -> list:
         self.variables_buffer = []
 
         buffer = []
@@ -145,11 +146,11 @@ class BiggerGP:
         self.to_string(buffer)
         return buffer
 
-    def populate_population(self):
+    def populate_population(self) -> None:
         for _ in range(self.POP_SIZE):
             self.population.append(self.generate_random_individual())
 
-    def fitness_pop(self, fitness_f):
+    def fitness_pop(self, fitness_f) -> None:
         for specimen in self.population:
             self.pop_fitness.append(fitness_f(specimen))
 
@@ -159,7 +160,7 @@ class BiggerGP:
     def get_best_fitness(self) -> float:
         return max(self.pop_fitness)
 
-    def crossover(self, specimen1, specimen2):
+    def crossover(self, specimen1, specimen2) -> list:
         new_specimen = []
         indexes1 = [index for index, value in enumerate(specimen1) if value == self.node_end]
         indexes2 = [index for index, value in enumerate(specimen2) if value == self.node_end]
@@ -173,7 +174,7 @@ class BiggerGP:
             new_specimen = specimen1[:index1] + specimen2[index2:]
         return new_specimen
 
-    def mutation(self, specimen):
+    def mutation(self, specimen) -> list:
         return self.crossover(specimen, self.generate_random_individual())
 
     def tournament(self, tournament_size: int):
