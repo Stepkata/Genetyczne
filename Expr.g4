@@ -27,16 +27,18 @@ IDENTIFIER: ('a'..'z' | 'A'..'Z') ('0'..'9' | 'a'..'z' | 'A'..'Z')*;
 INTLITERAL: ('-'? ('1'..'9')('0'..'9')*) | '0';
 INPUT: 'input()';
 
+DOT: '.';
+
 prog: (expr NEWLINE*)*;
 
-expr: (print
-    | if_statement
-    | variable_assign
-    | while
+expr: (print DOT
+    | if_statement DOT
+    | variable_assign DOT
+    | while DOT
     | NEWLINE);
 
 
-variable_assign:  IDENTIFIER EQ (literals | INPUT);
+variable_assign:  IDENTIFIER EQ literals | IDENTIFIER EQ INPUT;
 print: PRINT LPAREN literals RPAREN;
 
 operators: MULTIPLY
