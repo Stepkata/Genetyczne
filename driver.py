@@ -1,16 +1,19 @@
-import sys
 from antlr4 import *
 from gen.ExprLexer import ExprLexer
 from gen.ExprParser import ExprParser
+from gen.ExprVisitor import ExprVisitor
 
 
-def main(argv):
-    input_stream = FileStream(argv[1])
+def main(filename):
+    input_stream = FileStream(filename)
     lexer = ExprLexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = ExprParser(stream)
-    tree = parser.start_()
+    tree = parser.prog()
+    visitor = ExprVisitor()
+    output = visitor.visit(tree)
+    print(output)
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main("program.txt")
