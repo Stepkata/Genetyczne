@@ -31,15 +31,16 @@ DOT: '.';
 
 prog: (expr NEWLINE*)*;
 
-expr: (print DOT
+expr: (print_function DOT
     | if_statement DOT
     | variable_assign DOT
-    | while DOT
+    | while_loop DOT
     | NEWLINE);
 
 
 variable_assign:  IDENTIFIER EQ literals | IDENTIFIER EQ INPUT;
-print: PRINT LPAREN literals RPAREN;
+
+print_function: PRINT LPAREN literals RPAREN;
 
 operators: MULTIPLY
             | DIVIDE
@@ -64,6 +65,6 @@ if_statement: IF LPAREN condition RPAREN LCURL NEWLINE*
 condition: literals comparisson_type literals
         | condition logic_operators condition;
 
-while: WHILE LPAREN  condition RPAREN LCURL NEWLINE*
+while_loop: WHILE LPAREN  condition RPAREN LCURL NEWLINE*
         expr* NEWLINE*
         RCURL;

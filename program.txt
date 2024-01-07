@@ -1,0 +1,13 @@
+x = 4.
+while(x > 3 && x < 9 ) {
+x4 = x.
+x = x + 1.
+x4 = x.
+}.
+print(x4 - 3).
+if( x == x4 || x < x4) {
+x2 = input().
+x2 = x3 - x4.
+print(x2).
+}.
+print(x).
