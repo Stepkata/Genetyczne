@@ -8,3 +8,9 @@ while ! (silnia == 0) {
     silnia = silnia - 1.
     print(value).
 }.
+
+i = 0 .
+while( i < 20 ){
+    print(i).
+    i = i + 1.
+}.
