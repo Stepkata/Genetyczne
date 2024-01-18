@@ -3,7 +3,7 @@ print(x).
 
 silnia = 5 .
 value = 1.
-while (silnia > 0) {
+while ! (silnia == 0) {
     value = value * silnia.
     silnia = silnia - 1.
     print(value).

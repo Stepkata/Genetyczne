@@ -330,5 +330,7 @@ class ExprVisitor(ParseTreeVisitor):
         while condition:
             self.visitChildren(ctx)
             condition = self.visitCondition(ctx.condition())
+            if ctx.NOT() is not None:
+                condition = not condition
 
 del ExprParser
