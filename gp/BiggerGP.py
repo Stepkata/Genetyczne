@@ -221,7 +221,7 @@ class BiggerGP:
             if index1 == index2:
                 print(self.to_string(specimen))
                 return specimen
-            if any([x >= 1100 or x <= 1600 for x in specimen[index1:index2]]):
+            if any([x >= 1100 and x <= 1600 for x in specimen[index1:index2]]):
                 new_logic = self.grow([9])
             else:
                 new_logic = self.grow([6])
