@@ -5,7 +5,7 @@ import string
 
 class BiggerGP:
     ''' Class executing genetic algorithm using simple custom programming language'''
-    def __init__(self, p_size: int = 25000, depth: int = 3):
+    def __init__(self, p_size: int = 25000, depth: int = 2):
         self.MAX_LEN: int = 5
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
@@ -44,7 +44,7 @@ class BiggerGP:
 
         self.grammar = {
             0: [[1, 1900]],  # 'prog': ['expr NEWLINE'],
-            1: [[3, 2400, 1900], [8, 2400, 1900], [2, 2400, 1900], [10, 2400, 1900], [1900]], # 'expr': ['print COLON NEWLINE', 'if_statement COLON NEWLINE', 'variable_assign COLON NEWLINE', 'while COLON NEWLINE', 'NEWLINE'],
+            1: [[3, 2400, 1900], [8, 2400, 1900], [2, 2400, 1900], [10, 2400, 1900]], # 'expr': ['print COLON NEWLINE', 'if_statement COLON NEWLINE', 'variable_assign COLON NEWLINE', 'while COLON NEWLINE'],
             2: [[2100, 600, 6], [2100, 600, 2300]], # 'variable_assign': ['IDENTIFIER EQ literals', 'IDENTIFIER EQ INPUT'],
             3: [[2000, 700, 6, 800]],  # 'print': ['PRINT LPAREN literals RPAREN'],
             4: [[300], [400], [100], [500], [200]],  # 'operators': ['MULTIPLY', 'DIVIDE', 'ADD', 'MOD', 'SUBSTRACT'],
@@ -74,9 +74,10 @@ class BiggerGP:
         buffer = []
         for rule in pom:
             if isinstance(rule, list):
-                if self.start in rule and len(buffer) < self.MAX_LEN:
+                children = buffer.count(2400)
+                if self.start in rule and children < self.MAX_LEN:
                     index = rule.index(self.start)
-                    for _ in range(random.randint(1, self.MAX_LEN - len(buffer))):
+                    for _ in range(random.randint(1, self.MAX_LEN - children)):
                         rule.insert(index, self.start)
                 buffer += rule
             else:
@@ -107,9 +108,7 @@ class BiggerGP:
     def generate_random_individual(self) -> list:
         self.variables_buffer = []
 
-        buffer = []
-        for i in range(random.randint(1, self.MAX_LEN)):  # create the base length of program
-            buffer.append(self.start)
+        buffer = [self.start]
 
         print(buffer)
         for i in range(self.DEPTH - 1):  # grow the tree
@@ -118,9 +117,10 @@ class BiggerGP:
         pom = []  # make sure we do not create any more nodes
         for rule in buffer:
             if rule in self.grammar.keys():
-                new_rule = copy.deepcopy(random.choice(self.grammar[rule]))
-                while self.start in new_rule:
-                    new_rule = random.choice(self.grammar[rule])
+                rules = [rule for rule in copy.deepcopy(self.grammar[rule]) if self.start not in rule]
+                if len(rules) == 0:
+                    rules.append([1900]) #for safety
+                new_rule = random.choice(rules)
                 new_rule = self.check_new_rule(buffer, new_rule, rule)
                 pom.append(new_rule)
             else:
