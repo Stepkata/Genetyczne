@@ -193,18 +193,19 @@ class BiggerGP:
     def mutation(self, specimen) -> list:
         print("Old", self.to_string(specimen))
         print("-------")
-        type = random.randint(0,3)
+        type = random.randint(0,2)
+        print(type)
         if type == 0:
             for i in range(len(specimen)):
                 if specimen[i] in self.variables:
-                    specimen[i] = random.choice(self.variables.keys())
+                    specimen[i] = random.choice(list(self.variables.keys()))
             print(self.to_string(specimen))
             return specimen
         if type == 1:
             indexes = [index for index, x in enumerate(specimen) if x == self.node_end ]
             new_branch = self.grow(random.choice(self.grammar[self.start]))
             index = random.choice(indexes)
-            new_speciman = specimen[:index1+1] + new_branch
+            new_speciman = specimen[:index+1] + new_branch
             print(self.to_string(new_speciman))
             return new_speciman
         if type == 2:
