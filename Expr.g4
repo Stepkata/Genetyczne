@@ -18,7 +18,6 @@ EQEQ: '==';
 NOTEQ: '!=';
 AND: '&&';
 OR: '||';
-NOT: '!';
 
 IF: 'if';
 WHILE: 'while';
@@ -29,6 +28,7 @@ INTLITERAL: ('-'? ('1'..'9')('0'..'9')*) | '0';
 INPUT: 'input()';
 
 DOT: '.';
+NOT: '!';
 
 prog: (expr NEWLINE*)*;
 

@@ -3,10 +3,10 @@ import random
 
 
 class GrammarReader:
-    '''Class meant to read and process small grammars. It will recognise rules that create terminals (self.terminals)
+    """Class meant to read and process small grammars. It will recognise rules that create terminals (self.terminals)
       and separate them from grammar (self.rules). It will then assign int numbers to each rule (self.TERMINAL_NUMBERS, self.RULE_NUMBERS)
       and create grammar rules from them for space optimisation, as well as give look-up table with terminals to use in syntax creation.
-      It takes one parameter (self.terminal_start) to control the avaliable scope for assigning numbers to rules'''
+      It takes one parameter (self.terminal_start) to control the avaliable scope for assigning numbers to rules"""
     def __init__(self, terminal_start: int = 100):
         self.terminal_start: int = terminal_start
         self.terminals: dict = {}
@@ -47,7 +47,7 @@ class GrammarReader:
             self.RULE_NUMBERS = {rule : i for i, rule in enumerate(self.rules.keys())}
 
     def get_start_rule(self) -> str:
-        ''' returns the beginning rule of the grammar. We ignore the prog: expr rule as it can be simplified'''
+        """ returns the beginning rule of the grammar. We ignore the prog: expr rule as it can be simplified"""
         first = list(self.rules.keys())[0]
         if len(self.rules[first]) == 1:
             return list(self.rules.keys())[1]
@@ -55,25 +55,25 @@ class GrammarReader:
             return first
 
     def get_processed_grammar(self) -> dict:
-        ''' returns grammar consisting only of int numbers, based on self.TERMINAL_NUMBERS and self.RULE_NUMBERS'''
+        """ returns grammar consisting only of int numbers, based on self.TERMINAL_NUMBERS and self.RULE_NUMBERS"""
         buff = {}
         for (rule, term) in self.rules.items():
             pom = []
             for item in term:
-                help = []
+                helper = []
                 split = item.split(" ")
                 for i in split:
                     if i in self.terminals.keys():
-                        help.append(self.TERMINAL_NUMBERS[i])
+                        helper.append(self.TERMINAL_NUMBERS[i])
                     elif i in self.rules.keys():
-                        help.append(self.RULE_NUMBERS[i])
-                pom.append(help)
+                        helper.append(self.RULE_NUMBERS[i])
+                pom.append(helper)
             buff[self.RULE_NUMBERS[rule]] = pom
         print(buff)
         return buff
     
     def get_terminal_table(self) -> dict:
-        ''' returns terminal lookup table for future parsing '''
+        """ returns terminal lookup table for future parsing """
         buff = {}
         for (key, item) in self.TERMINAL_NUMBERS.items():
             buff[item] = self.terminals[key]
@@ -84,7 +84,7 @@ class GrammarReader:
 
 if __name__ == "__main__":
     g = GrammarReader()
-    g.read_grammar("C:\\Users\\keste\\Genetyczne\\Expr.g4")
+    g.read_grammar("C:\\Users\\keste\\PycharmProjects\\Genetyczne\\Expr.g4")
     print("\n\n")
     print(g.TERMINAL_NUMBERS)
     print(g.RULE_NUMBERS)

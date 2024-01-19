@@ -4,7 +4,7 @@ import string
 
 
 class BiggerGP:
-    ''' Class executing genetic algorithm using simple custom programming language'''
+    """ Class executing genetic algorithm using simple custom programming language"""
 
     def __init__(self, p_size: int = 25000, depth: int = 3):
         self.MAX_LEN: int = 2
@@ -42,7 +42,8 @@ class BiggerGP:
             2100: 'IDENTIFIER',
             2200: 'INTLITERAL',
             2300: 'input()',
-            2400: '.'}
+            2400: '.',
+            2500: '!'}
 
         self.grammar = {
             0: [[1, 1900]],  # 'prog': ['expr NEWLINE'],
@@ -55,21 +56,22 @@ class BiggerGP:
             5: [[1500], [1600]],  # 'logic_operators': ['AND', 'OR'],
             6: [[2100], [2200], [6, 4, 6]],  # 'literals': ['IDENTIFIER', 'INTLITERAL', 'literals operators literals'],
             7: [[1300], [1200], [1100], [1400]],  # 'comparisson_type': ['EQEQ', 'GTHAN', 'LTHAN', 'NOTEQ'],
-            8: [[1700, 700, 9, 800, 900, 1900, 1, 1900, 1000]],
-            # 'if_statement': ['IF LPAREN condition RPAREN LCURL NEWLINE expr NEWLINE RCURL'],
+            8: [[1700, 700, 9, 800, 900, 1900, 1, 1900, 1000], [1700, 2500, 700, 9, 800, 900, 1900, 1, 1900, 1000]],
+            # 'if_statement': ['IF LPAREN condition RPAREN LCURL NEWLINE expr NEWLINE RCURL'],['IF NOT LPAREN condition RPAREN LCURL NEWLINE expr NEWLINE RCURL']
             9: [[6, 7, 6], [9, 5, 9]],
             # 'condition': ['literals comparisson_type literals', 'condition logic_operators condition'],
-            10: [[1800, 700, 9, 800, 900, 1900, 1, 1900, 1000]]
-            # 'while': ['WHILE LPAREN  condition RPAREN LCURL NEWLINE  expr NEWLINE  RCURL']
+            10: [[1800, 700, 9, 800, 900, 1900, 1, 1900, 1000], [1800, 2500, 700, 9, 800, 900, 1900, 1, 1900, 1000]]
+            # 'while': ['WHILE LPAREN  condition RPAREN LCURL NEWLINE  expr NEWLINE  RCURL'], ['WHILE NOT LPAREN  condition RPAREN LCURL NEWLINE  expr NEWLINE  RCURL']
         }
 
         self.node_starts = [1700, 2000, 1800]
         self.start: int = 1  # expr
         self.node_end: int = 2400  # dot
         self.variables: dict = {}
-        self.intliterals: dict = {}
+        self.int_literals: dict = {}
         self.variables_buffer: list = []
 
+    """grows the buffer. An iteration of self.grow"""
     def traverse(self, buffer) -> list:
         pom = []
         for index, rule in enumerate(buffer):
@@ -87,6 +89,13 @@ class BiggerGP:
                 buffer.append(rule)
         return buffer
 
+    """Checks for special cases when creating rules:
+        - if the new_rule demands the use of a variable, it checks if there are any declared by the individual. 
+            if not the variable is swapped for an integer
+        - if the rule will create a variable, we add it to the declared variables (self.variables and variables_buffer)
+            and immediately place it in the new_rule
+        - if the rule is a condition we check the neighbourhood to count how long is the logical statement already.
+            If it is longer than self.MAX_LOGIC_LEN, we do not allow it to make more conditions in new_rule"""
     def check_new_rule(self, buffer, new_rule, rule, index) -> list:
         if new_rule == [2100]:  # we cannot use variables we didn't declare
             variables_pom = []
@@ -121,6 +130,8 @@ class BiggerGP:
 
         return new_rule
 
+    """Grows the syntax tree from the starting rule in the buffer.
+     Makes sure no start rule is left at the maximum depth"""
     def grow(self, buffer: []):
         pom = []  # make sure we do not create any more nodes
         for index, rule in enumerate(buffer):
@@ -145,8 +156,8 @@ class BiggerGP:
 
         for i in range(len(buffer)):  # choose some ints
             if buffer[i] == 2200:
-                index = len(self.intliterals) + 100000
-                self.intliterals[index] = random.randint(0, 100)  # can be changed
+                index = len(self.int_literals) + 100000
+                self.int_literals[index] = random.randint(0, 100)  # can be changed
                 buffer[i] = index
 
         self.to_string(buffer)
@@ -164,7 +175,7 @@ class BiggerGP:
         for _ in range(self.POP_SIZE):
             self.population.append(self.generate_random_individual())
 
-    def fitness_pop(self, fitness_f) -> None:
+    def calculate_pop_fitness(self, fitness_f) -> None:
         for specimen in self.population:
             self.pop_fitness.append(self.fitness(specimen, fitness_f))
 
@@ -174,21 +185,22 @@ class BiggerGP:
     def get_best_fitness(self) -> float:
         return max(self.pop_fitness)
 
-    def crossover(self, specimen1, specimen2) -> list:
+    """Swaps branches between parent1 and parent1"""
+    def crossover(self, parent1, parent2) -> list:
         new_specimen = []
-        (index1_start, index1_end) = self.find_index(specimen1)
-        (index2_start, index2_end) = self.find_index(specimen2)
-        print("parent1", self.to_string(specimen1))
+        (index1_start, index1_end) = self.find_index(parent1)
+        (index2_start, index2_end) = self.find_index(parent2)
+        print("parent1", self.to_string(parent1))
         print("----------------------------------")
-        print("parent2", self.to_string(specimen2))
-        print("start: ", specimen1[index1_start], "end: ", specimen1[index1_end])
-        new_specimen = specimen1[:index1_start] + specimen2[index2_start:index2_end] + specimen1[index1_end:]
+        print("parent2", self.to_string(parent2))
+        print("start: ", parent1[index1_start], "end: ", parent1[index1_end])
+        new_specimen = parent1[:index1_start] + parent2[index2_start:index2_end] + parent1[index1_end:]
         print("----------------------------------")
         print("child", self.to_string(new_specimen))
         return new_specimen
 
+    """Finds the beginning and end of the statement (branch) that will be swapped"""
     def find_index(self, specimen: []) -> tuple:
-        indexes = []
         indexes = [index for index, item in enumerate(specimen) if item in self.node_starts]
         for i in range(len(specimen) - 2):
             if specimen[i] >= 10000 and specimen[i + 1] == 600:
@@ -220,24 +232,28 @@ class BiggerGP:
                 return i + 1
         return len(buffer) - 1
 
+    """Mutates a random individual. There are following ways the individual is mutated:
+        0. The variables used in the equations are shuffled
+        1. One of its statements (branches) is replaced
+        2. The first condition or print statement is changed"""
     def mutation(self, specimen) -> list:
         print("Old", self.to_string(specimen))
         print("-------")
-        type = random.randint(0, 2)
-        print(type)
-        if type == 0:
+        mutation_type = random.randint(0, 2)
+        print(mutation_type)
+        if mutation_type == 0:
             for i in range(len(specimen)):
                 if specimen[i] in self.variables:
                     specimen[i] = random.choice(list(self.variables.keys()))
             print(self.to_string(specimen))
             return specimen
-        if type == 1:
+        if mutation_type == 1:
             (index1_start, index1_end) = self.find_index(specimen1)
             new_branch = self.grow(random.choice(self.grammar[self.start]))
             new_specimen = specimen1[:index1_start] + new_branch + specimen1[index1_end + 1:]
             print(self.to_string(new_specimen))
             return new_specimen
-        if type == 2:
+        if mutation_type == 2:
             index1 = len(specimen) - 1
             index2 = len(specimen) - 1
             for i in range(len(specimen)):
@@ -257,6 +273,8 @@ class BiggerGP:
             print(self.to_string(new_specimen))
             return new_specimen
 
+
+    """Finds the most fit individual """
     def tournament(self, tournament_size: int):
         best = random.randint(0, len(self.population))
         best_fit = -1.0e34
@@ -268,6 +286,7 @@ class BiggerGP:
 
         return self.population[best]
 
+    """Chooses a random individual to be replaced from a group of tournament_size individuals"""
     def negative_tournament(self, tournament_size: int):
         worst = random.randint(0, len(self.population))
         worst_fit = -1.0e34
@@ -279,13 +298,14 @@ class BiggerGP:
 
         return worst
 
+    """Translates the individual to readable string using the terminals_table lookup table"""
     def to_string(self, buffer) -> str:
         pom = []
         for term in buffer:  # translate terminals
             if term in self.terminal_table.keys():
                 pom.append(self.terminal_table[term])
-            elif term in self.intliterals.keys():
-                pom.append(str(self.intliterals[term]))
+            elif term in self.int_literals.keys():
+                pom.append(str(self.int_literals[term]))
             elif term in self.variables.keys():
                 pom.append(self.variables[term])
             else:
