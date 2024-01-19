@@ -18,6 +18,7 @@ EQEQ: '==';
 NOTEQ: '!=';
 AND: '&&';
 OR: '||';
+NOT: '!';
 
 IF: 'if';
 WHILE: 'while';
@@ -58,13 +59,13 @@ comparisson_type: EQEQ
           | LTHAN
           | NOTEQ;
 
-if_statement: IF LPAREN condition RPAREN LCURL NEWLINE*
+if_statement: IF NOT? LPAREN condition RPAREN LCURL NEWLINE*
                 expr* NEWLINE*
                 RCURL;
 
 condition: literals comparisson_type literals
         | condition logic_operators condition;
 
-while_loop: WHILE LPAREN  condition RPAREN LCURL NEWLINE*
+while_loop: WHILE NOT? LPAREN  condition RPAREN LCURL NEWLINE*
         expr* NEWLINE*
         RCURL;

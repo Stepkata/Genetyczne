@@ -20,9 +20,11 @@ class Variable:
 # This class defines a complete generic visitor for a parse tree produced by ExprParser.
 class ExprVisitor(ParseTreeVisitor):
 
-    def __init__(self):
+    def __init__(self, max_loop_iter = 10):
         self.variables: List[Variable] = []
         self.outputs: List[int] = []
+        self.max_loop_iter = max_loop_iter
+        self.counter = 0
 
     def findVariable(self, var_name: str) -> Tuple[bool, Union[Variable, None]]:
         """
@@ -38,6 +40,51 @@ class ExprVisitor(ParseTreeVisitor):
             if var.name == var_name:
                 return True, var
         return False, None
+    def get_value(self, values, outputs):
+        length = len(outputs)
+        i = 0
+        j = 0
+        while (len(outputs) != 0):
+            while (True):
+                if outputs[i] in ["*", "/", "%"]:
+                    if outputs[i] == "*":
+                        values[i] = values[i] * values[i + 1]
+                        values.pop(i + 1)
+                        outputs.pop(i)
+                        i -= 1
+                    elif outputs[i] == "/":
+                        values[i] = values[i] / values[i + 1] if values[i + 1] != 0 else values[i] / 1
+                        values.pop(i + 1)
+                        outputs.pop(i)
+                        i -= 1
+                    elif outputs[i] == "%":
+                        values[i] = values[i] % values[i + 1] if values[i + 1] != 0 else values[i] % 1
+                        values.pop(i + 1)
+                        outputs.pop(i)
+                        i -= 1
+                i += 1
+                if "*" not in outputs and "/" not in outputs and "%" not in outputs:
+                    break
+            while (True):
+                if len(outputs) == 0:
+                    break
+                if outputs[j] in ["+", "-"]:
+                    if outputs[j] == "+":
+                        values[j] = values[j] + values[j + 1]
+                        values.pop(j + 1)
+                        outputs.pop(j)
+                        j -= 1
+                    elif outputs[j] == "-":
+                        values[j] = values[j] - values[j + 1]
+                        values.pop(j + 1)
+                        outputs.pop(j)
+                        j -= 1
+                j += 1
+                if "+" not in outputs and "-" not in outputs:
+                    break
+            break
+        value = values[0]
+        return value
 
     def visitProg(self, ctx: ExprParser.ProgContext):
         """
@@ -77,7 +124,8 @@ class ExprVisitor(ParseTreeVisitor):
         name = ctx.IDENTIFIER().getText()
         value = 0
         if ctx.literals():
-            value = self.visitLiterals(ctx.literals())
+            values, outputs  = self.visitLiterals(ctx.literals(), [], [])
+            value = self.get_value(values, outputs)
         else:
             value = random.randint(0, 100)
 
@@ -88,7 +136,7 @@ class ExprVisitor(ParseTreeVisitor):
                 variable.value = value
         else:
             self.variables.append(Variable(name, value))
-        return self.visitChildren(ctx)
+        # return self.visitChildren(ctx)
 
     def visitPrint_function(self, ctx: ExprParser.Print_functionContext):
         """
@@ -97,10 +145,53 @@ class ExprVisitor(ParseTreeVisitor):
         Args:
             ctx (ExprParser.Print_functionContext): The parse tree context.
         """
-        value = self.visitLiterals(ctx.literals())
+        values, outputs = self.visitLiterals(ctx.literals(), [], [])
+        length = len(outputs)
+        i = 0
+        j = 0
+        while (len(outputs) != 0):
+            while (True):
+                if outputs[i] in ["*", "/", "%"]:
+                    if outputs[i] == "*":
+                        values[i] = values[i] * values[i + 1]
+                        values.pop(i + 1)
+                        outputs.pop(i)
+                        i -= 1
+                    elif outputs[i] == "/":
+                        values[i] = values[i] / values[i + 1] if values[i + 1] != 0 else values[i] / 1
+                        values.pop(i + 1)
+                        outputs.pop(i)
+                        i -= 1
+                    elif outputs[i] == "%":
+                        values[i] = values[i] % values[i + 1] if values[i + 1] != 0 else values[i] % 1
+                        values.pop(i + 1)
+                        outputs.pop(i)
+                        i -= 1
+                i += 1
+                if "*" not in outputs and "/" not in outputs and "%" not in outputs:
+                    break
+            while (True):
+                if len(outputs) == 0:
+                    break
+                if outputs[j] in ["+", "-"]:
+                    if outputs[j] == "+":
+                        values[j] = values[j] + values[j + 1]
+                        values.pop(j + 1)
+                        outputs.pop(j)
+                        j -= 1
+                    elif outputs[j] == "-":
+                        values[j] = values[j] - values[j + 1]
+                        values.pop(j + 1)
+                        outputs.pop(j)
+                        j -= 1
+                j += 1
+                if "+" not in outputs and "-" not in outputs:
+                    break
+            break
+        value = values[0]
         self.outputs.append(value)
 
-    def visitOperators(self, ctx: ExprParser.OperatorsContext, literal1: int, literal2: int):
+    def visitOperators(self, ctx: ExprParser.OperatorsContext):
         """
         Visit a parse tree produced by ExprParser#operators.
 
@@ -113,21 +204,15 @@ class ExprVisitor(ParseTreeVisitor):
             int: The result of the operator operation.
         """
         if ctx.ADD():
-            return literal1 + literal2
+            return "+"
         elif ctx.SUBSTRACT():
-            return literal1 - literal2
+            return "-"
         elif ctx.MULTIPLY():
-            return literal1 * literal2
+            return "*"
         elif ctx.DIVIDE():
-            if literal2 == 0:
-                return 0
-            else:
-                return int(literal1 / literal2)
+            return "/"
         elif ctx.MOD():
-            if literal2 == 0:
-                return 0
-            else:
-                return literal1 % literal2
+            return "%"
         else:
             return 0
 
@@ -148,7 +233,7 @@ class ExprVisitor(ParseTreeVisitor):
         elif ctx.OR():
             return condition1 or condition2
 
-    def visitLiterals(self, ctx: ExprParser.LiteralsContext):
+    def visitLiterals(self, ctx: ExprParser.LiteralsContext, values:List[int], outputs:List):
         """
         Visit a parse tree produced by ExprParser#literals.
 
@@ -158,17 +243,22 @@ class ExprVisitor(ParseTreeVisitor):
         Returns:
             Union[int, Any]: The value of the literals.
         """
+
         if ctx.IDENTIFIER():
             was_variable_found, variable = self.findVariable(ctx.IDENTIFIER().getText())
             if was_variable_found:
-                return variable.value
+                values.append(variable.value)
+                return values,outputs
             else:
                 return 0
         elif ctx.INTLITERAL():
-            return int(ctx.INTLITERAL().getText())
+            values.append(int(ctx.INTLITERAL().getText()))
+            return values, outputs
         elif ctx.literals():
-            literal1, literal2 = self.visitLiterals(ctx.literals(0)), self.visitLiterals(ctx.literals(1))
-            return self.visitOperators(ctx.operators(), literal1, literal2)
+            values,outputs = self.visitLiterals(ctx.literals(0), values, outputs)
+            outputs.append(self.visitOperators(ctx.operators()))
+            values, outputs = self.visitLiterals(ctx.literals(1), values, outputs)
+            return values,outputs
 
     def visitComparisson_type(self, ctx: ExprParser.Comparisson_typeContext, literal1: int, literal2: int):
         """
@@ -202,6 +292,9 @@ class ExprVisitor(ParseTreeVisitor):
             Any: The result of visiting the children of the parse tree.
         """
         condition = self.visitCondition(ctx.condition())
+        if ctx.NOT() is not None:
+            condition = not condition
+
         if condition:
             return self.visitChildren(ctx)
 
@@ -216,8 +309,10 @@ class ExprVisitor(ParseTreeVisitor):
             Union[bool, Any]: The result of the condition evaluation.
         """
         if ctx.literals():
-            literal1 = self.visitLiterals(ctx.literals(0))
-            literal2 = self.visitLiterals(ctx.literals(1))
+            values, outputs = self.visitLiterals(ctx.literals(0), [], [])
+            literal1 = self.get_value(values, outputs)
+            values, outputs = self.visitLiterals(ctx.literals(1), [], [])
+            literal2 = self.get_value(values, outputs)
             return self.visitComparisson_type(ctx.comparisson_type(), literal1, literal2)
         else:
             condition1 = self.visitCondition(ctx.condition(0))
@@ -232,8 +327,13 @@ class ExprVisitor(ParseTreeVisitor):
             ctx (ExprParser.While_loopContext): The parse tree context.
         """
         condition = self.visitCondition(ctx.condition())
-        while condition:
+        if ctx.NOT() is not None:
+            condition = not condition
+        while condition and self.counter < self.max_loop_iter:
+            self.counter += 1
             self.visitChildren(ctx)
             condition = self.visitCondition(ctx.condition())
+            if ctx.NOT() is not None:
+                condition = not condition
 
 del ExprParser
