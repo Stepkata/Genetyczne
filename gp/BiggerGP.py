@@ -234,10 +234,9 @@ class BiggerGP:
             print(self.to_string(specimen))
             return specimen
         if type == 1:
-            indexes = [index for index, x in enumerate(specimen) if x == self.node_end ]
+            (index1_start, index1_end) = self.find_index(specimen1)
             new_branch = self.grow(random.choice(self.grammar[self.start]))
-            index = random.choice(indexes)
-            new_speciman = specimen[:index+1] + new_branch
+            new_speciman = specimen1[:index1_start] + new_branch + specimen1[index1_end+1:]
             print(self.to_string(new_speciman))
             return new_speciman
         if type == 2:
@@ -327,5 +326,5 @@ if __name__ == "__main__":
     #specimen3 =  b.generate_random_individual()
     #specimen4 =  b.generate_random_individual()
     #specimen5 =  b.generate_random_individual()
-    b.crossover(specimen1, specimen2)
-    #b.mutation(specimen1)
+    #b.crossover(specimen1, specimen2)
+    b.mutation(specimen1)
