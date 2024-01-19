@@ -1,17 +1,16 @@
-x = 4.
-while(x > 3 && x < 9 ) {
-x4 = x.
-x = x + 1.
-x4 = x.
-}.
-print(x4 - 3).
-if( x == x4 || x < x4) {
-x2 = input().
-x2 = x3 - x4.
-print(x2).
-}.
+x = 3 + 3 / 3 * 3.
 print(x).
-x5 = 4*4.
-print(x5).
-x6 = 2 + 2*2.
-print(x6).
+
+silnia = 5 .
+value = 1.
+while ! (silnia == 0) {
+    value = value * silnia.
+    silnia = silnia - 1.
+    print(value).
+}.
+
+i = 0 .
+while( i < 20 ){
+    print(i).
+    i = i + 1.
+}.

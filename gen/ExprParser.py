@@ -7,58 +7,61 @@ import sys
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\33")
-        buf.write("\u0095\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
+        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\34")
+        buf.write("\u009b\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7")
         buf.write("\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\3\2\3\2\7\2")
         buf.write("\33\n\2\f\2\16\2\36\13\2\7\2 \n\2\f\2\16\2#\13\2\3\3\3")
         buf.write("\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\62")
         buf.write("\n\3\3\4\3\4\3\4\3\4\3\4\3\4\5\4:\n\4\3\5\3\5\3\5\3\5")
         buf.write("\3\5\3\6\3\6\3\7\3\7\3\b\3\b\3\b\5\bH\n\b\3\b\3\b\3\b")
-        buf.write("\3\b\7\bN\n\b\f\b\16\bQ\13\b\3\t\3\t\3\n\3\n\3\n\3\n\3")
-        buf.write("\n\3\n\7\n[\n\n\f\n\16\n^\13\n\3\n\7\na\n\n\f\n\16\nd")
-        buf.write("\13\n\3\n\7\ng\n\n\f\n\16\nj\13\n\3\n\3\n\3\13\3\13\3")
-        buf.write("\13\3\13\3\13\3\13\3\13\3\13\3\13\7\13w\n\13\f\13\16\13")
-        buf.write("z\13\13\3\f\3\f\3\f\3\f\3\f\3\f\7\f\u0082\n\f\f\f\16\f")
-        buf.write("\u0085\13\f\3\f\7\f\u0088\n\f\f\f\16\f\u008b\13\f\3\f")
-        buf.write("\7\f\u008e\n\f\f\f\16\f\u0091\13\f\3\f\3\f\3\f\2\4\16")
-        buf.write("\24\r\2\4\6\b\n\f\16\20\22\24\26\2\5\3\2\4\b\3\2\22\23")
-        buf.write("\3\2\16\21\2\u0099\2!\3\2\2\2\4\61\3\2\2\2\69\3\2\2\2")
-        buf.write("\b;\3\2\2\2\n@\3\2\2\2\fB\3\2\2\2\16G\3\2\2\2\20R\3\2")
-        buf.write("\2\2\22T\3\2\2\2\24m\3\2\2\2\26{\3\2\2\2\30\34\5\4\3\2")
-        buf.write("\31\33\7\26\2\2\32\31\3\2\2\2\33\36\3\2\2\2\34\32\3\2")
-        buf.write("\2\2\34\35\3\2\2\2\35 \3\2\2\2\36\34\3\2\2\2\37\30\3\2")
-        buf.write("\2\2 #\3\2\2\2!\37\3\2\2\2!\"\3\2\2\2\"\3\3\2\2\2#!\3")
-        buf.write("\2\2\2$%\5\b\5\2%&\7\33\2\2&\62\3\2\2\2\'(\5\22\n\2()")
-        buf.write("\7\33\2\2)\62\3\2\2\2*+\5\6\4\2+,\7\33\2\2,\62\3\2\2\2")
-        buf.write("-.\5\26\f\2./\7\33\2\2/\62\3\2\2\2\60\62\7\26\2\2\61$")
-        buf.write("\3\2\2\2\61\'\3\2\2\2\61*\3\2\2\2\61-\3\2\2\2\61\60\3")
-        buf.write("\2\2\2\62\5\3\2\2\2\63\64\7\30\2\2\64\65\7\t\2\2\65:\5")
-        buf.write("\16\b\2\66\67\7\30\2\2\678\7\t\2\28:\7\32\2\29\63\3\2")
-        buf.write("\2\29\66\3\2\2\2:\7\3\2\2\2;<\7\27\2\2<=\7\n\2\2=>\5\16")
-        buf.write("\b\2>?\7\13\2\2?\t\3\2\2\2@A\t\2\2\2A\13\3\2\2\2BC\t\3")
-        buf.write("\2\2C\r\3\2\2\2DE\b\b\1\2EH\7\30\2\2FH\7\31\2\2GD\3\2")
-        buf.write("\2\2GF\3\2\2\2HO\3\2\2\2IJ\f\3\2\2JK\5\n\6\2KL\5\16\b")
-        buf.write("\4LN\3\2\2\2MI\3\2\2\2NQ\3\2\2\2OM\3\2\2\2OP\3\2\2\2P")
-        buf.write("\17\3\2\2\2QO\3\2\2\2RS\t\4\2\2S\21\3\2\2\2TU\7\24\2\2")
-        buf.write("UV\7\n\2\2VW\5\24\13\2WX\7\13\2\2X\\\7\f\2\2Y[\7\26\2")
-        buf.write("\2ZY\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\]\3\2\2\2]b\3\2\2\2")
-        buf.write("^\\\3\2\2\2_a\5\4\3\2`_\3\2\2\2ad\3\2\2\2b`\3\2\2\2bc")
-        buf.write("\3\2\2\2ch\3\2\2\2db\3\2\2\2eg\7\26\2\2fe\3\2\2\2gj\3")
-        buf.write("\2\2\2hf\3\2\2\2hi\3\2\2\2ik\3\2\2\2jh\3\2\2\2kl\7\r\2")
-        buf.write("\2l\23\3\2\2\2mn\b\13\1\2no\5\16\b\2op\5\20\t\2pq\5\16")
-        buf.write("\b\2qx\3\2\2\2rs\f\3\2\2st\5\f\7\2tu\5\24\13\4uw\3\2\2")
-        buf.write("\2vr\3\2\2\2wz\3\2\2\2xv\3\2\2\2xy\3\2\2\2y\25\3\2\2\2")
-        buf.write("zx\3\2\2\2{|\7\25\2\2|}\7\n\2\2}~\5\24\13\2~\177\7\13")
-        buf.write("\2\2\177\u0083\7\f\2\2\u0080\u0082\7\26\2\2\u0081\u0080")
-        buf.write("\3\2\2\2\u0082\u0085\3\2\2\2\u0083\u0081\3\2\2\2\u0083")
-        buf.write("\u0084\3\2\2\2\u0084\u0089\3\2\2\2\u0085\u0083\3\2\2\2")
-        buf.write("\u0086\u0088\5\4\3\2\u0087\u0086\3\2\2\2\u0088\u008b\3")
-        buf.write("\2\2\2\u0089\u0087\3\2\2\2\u0089\u008a\3\2\2\2\u008a\u008f")
-        buf.write("\3\2\2\2\u008b\u0089\3\2\2\2\u008c\u008e\7\26\2\2\u008d")
-        buf.write("\u008c\3\2\2\2\u008e\u0091\3\2\2\2\u008f\u008d\3\2\2\2")
-        buf.write("\u008f\u0090\3\2\2\2\u0090\u0092\3\2\2\2\u0091\u008f\3")
-        buf.write("\2\2\2\u0092\u0093\7\r\2\2\u0093\27\3\2\2\2\17\34!\61")
-        buf.write("9GO\\bhx\u0083\u0089\u008f")
+        buf.write("\3\b\7\bN\n\b\f\b\16\bQ\13\b\3\t\3\t\3\n\3\n\5\nW\n\n")
+        buf.write("\3\n\3\n\3\n\3\n\3\n\7\n^\n\n\f\n\16\na\13\n\3\n\7\nd")
+        buf.write("\n\n\f\n\16\ng\13\n\3\n\7\nj\n\n\f\n\16\nm\13\n\3\n\3")
+        buf.write("\n\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\7\13z")
+        buf.write("\n\13\f\13\16\13}\13\13\3\f\3\f\5\f\u0081\n\f\3\f\3\f")
+        buf.write("\3\f\3\f\3\f\7\f\u0088\n\f\f\f\16\f\u008b\13\f\3\f\7\f")
+        buf.write("\u008e\n\f\f\f\16\f\u0091\13\f\3\f\7\f\u0094\n\f\f\f\16")
+        buf.write("\f\u0097\13\f\3\f\3\f\3\f\2\4\16\24\r\2\4\6\b\n\f\16\20")
+        buf.write("\22\24\26\2\5\3\2\4\b\3\2\22\23\3\2\16\21\2\u00a1\2!\3")
+        buf.write("\2\2\2\4\61\3\2\2\2\69\3\2\2\2\b;\3\2\2\2\n@\3\2\2\2\f")
+        buf.write("B\3\2\2\2\16G\3\2\2\2\20R\3\2\2\2\22T\3\2\2\2\24p\3\2")
+        buf.write("\2\2\26~\3\2\2\2\30\34\5\4\3\2\31\33\7\27\2\2\32\31\3")
+        buf.write("\2\2\2\33\36\3\2\2\2\34\32\3\2\2\2\34\35\3\2\2\2\35 \3")
+        buf.write("\2\2\2\36\34\3\2\2\2\37\30\3\2\2\2 #\3\2\2\2!\37\3\2\2")
+        buf.write("\2!\"\3\2\2\2\"\3\3\2\2\2#!\3\2\2\2$%\5\b\5\2%&\7\34\2")
+        buf.write("\2&\62\3\2\2\2\'(\5\22\n\2()\7\34\2\2)\62\3\2\2\2*+\5")
+        buf.write("\6\4\2+,\7\34\2\2,\62\3\2\2\2-.\5\26\f\2./\7\34\2\2/\62")
+        buf.write("\3\2\2\2\60\62\7\27\2\2\61$\3\2\2\2\61\'\3\2\2\2\61*\3")
+        buf.write("\2\2\2\61-\3\2\2\2\61\60\3\2\2\2\62\5\3\2\2\2\63\64\7")
+        buf.write("\31\2\2\64\65\7\t\2\2\65:\5\16\b\2\66\67\7\31\2\2\678")
+        buf.write("\7\t\2\28:\7\33\2\29\63\3\2\2\29\66\3\2\2\2:\7\3\2\2\2")
+        buf.write(";<\7\30\2\2<=\7\n\2\2=>\5\16\b\2>?\7\13\2\2?\t\3\2\2\2")
+        buf.write("@A\t\2\2\2A\13\3\2\2\2BC\t\3\2\2C\r\3\2\2\2DE\b\b\1\2")
+        buf.write("EH\7\31\2\2FH\7\32\2\2GD\3\2\2\2GF\3\2\2\2HO\3\2\2\2I")
+        buf.write("J\f\3\2\2JK\5\n\6\2KL\5\16\b\4LN\3\2\2\2MI\3\2\2\2NQ\3")
+        buf.write("\2\2\2OM\3\2\2\2OP\3\2\2\2P\17\3\2\2\2QO\3\2\2\2RS\t\4")
+        buf.write("\2\2S\21\3\2\2\2TV\7\25\2\2UW\7\24\2\2VU\3\2\2\2VW\3\2")
+        buf.write("\2\2WX\3\2\2\2XY\7\n\2\2YZ\5\24\13\2Z[\7\13\2\2[_\7\f")
+        buf.write("\2\2\\^\7\27\2\2]\\\3\2\2\2^a\3\2\2\2_]\3\2\2\2_`\3\2")
+        buf.write("\2\2`e\3\2\2\2a_\3\2\2\2bd\5\4\3\2cb\3\2\2\2dg\3\2\2\2")
+        buf.write("ec\3\2\2\2ef\3\2\2\2fk\3\2\2\2ge\3\2\2\2hj\7\27\2\2ih")
+        buf.write("\3\2\2\2jm\3\2\2\2ki\3\2\2\2kl\3\2\2\2ln\3\2\2\2mk\3\2")
+        buf.write("\2\2no\7\r\2\2o\23\3\2\2\2pq\b\13\1\2qr\5\16\b\2rs\5\20")
+        buf.write("\t\2st\5\16\b\2t{\3\2\2\2uv\f\3\2\2vw\5\f\7\2wx\5\24\13")
+        buf.write("\4xz\3\2\2\2yu\3\2\2\2z}\3\2\2\2{y\3\2\2\2{|\3\2\2\2|")
+        buf.write("\25\3\2\2\2}{\3\2\2\2~\u0080\7\26\2\2\177\u0081\7\24\2")
+        buf.write("\2\u0080\177\3\2\2\2\u0080\u0081\3\2\2\2\u0081\u0082\3")
+        buf.write("\2\2\2\u0082\u0083\7\n\2\2\u0083\u0084\5\24\13\2\u0084")
+        buf.write("\u0085\7\13\2\2\u0085\u0089\7\f\2\2\u0086\u0088\7\27\2")
+        buf.write("\2\u0087\u0086\3\2\2\2\u0088\u008b\3\2\2\2\u0089\u0087")
+        buf.write("\3\2\2\2\u0089\u008a\3\2\2\2\u008a\u008f\3\2\2\2\u008b")
+        buf.write("\u0089\3\2\2\2\u008c\u008e\5\4\3\2\u008d\u008c\3\2\2\2")
+        buf.write("\u008e\u0091\3\2\2\2\u008f\u008d\3\2\2\2\u008f\u0090\3")
+        buf.write("\2\2\2\u0090\u0095\3\2\2\2\u0091\u008f\3\2\2\2\u0092\u0094")
+        buf.write("\7\27\2\2\u0093\u0092\3\2\2\2\u0094\u0097\3\2\2\2\u0095")
+        buf.write("\u0093\3\2\2\2\u0095\u0096\3\2\2\2\u0096\u0098\3\2\2\2")
+        buf.write("\u0097\u0095\3\2\2\2\u0098\u0099\7\r\2\2\u0099\27\3\2")
+        buf.write("\2\2\21\34!\619GOV_ek{\u0080\u0089\u008f\u0095")
         return buf.getvalue()
 
 
@@ -74,13 +77,13 @@ class ExprParser ( Parser ):
 
     literalNames = [ "<INVALID>", "' '", "'+'", "'-'", "'*'", "'/'", "'%'", 
                      "'='", "'('", "')'", "'{'", "'}'", "'<'", "'>'", "'=='", 
-                     "'!='", "'&&'", "'||'", "'if'", "'while'", "<INVALID>", 
+                     "'!='", "'&&'", "'||'", "'!'", "'if'", "'while'", "<INVALID>", 
                      "'print'", "<INVALID>", "<INVALID>", "'input()'", "'.'" ]
 
     symbolicNames = [ "<INVALID>", "WS", "ADD", "SUBSTRACT", "MULTIPLY", 
                       "DIVIDE", "MOD", "EQ", "LPAREN", "RPAREN", "LCURL", 
                       "RCURL", "LTHAN", "GTHAN", "EQEQ", "NOTEQ", "AND", 
-                      "OR", "IF", "WHILE", "NEWLINE", "PRINT", "IDENTIFIER", 
+                      "OR", "NOT", "IF", "WHILE", "NEWLINE", "PRINT", "IDENTIFIER", 
                       "INTLITERAL", "INPUT", "DOT" ]
 
     RULE_prog = 0
@@ -117,14 +120,15 @@ class ExprParser ( Parser ):
     NOTEQ=15
     AND=16
     OR=17
-    IF=18
-    WHILE=19
-    NEWLINE=20
-    PRINT=21
-    IDENTIFIER=22
-    INTLITERAL=23
-    INPUT=24
-    DOT=25
+    NOT=18
+    IF=19
+    WHILE=20
+    NEWLINE=21
+    PRINT=22
+    IDENTIFIER=23
+    INTLITERAL=24
+    INPUT=25
+    DOT=26
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -740,6 +744,9 @@ class ExprParser ( Parser ):
         def RCURL(self):
             return self.getToken(ExprParser.RCURL, 0)
 
+        def NOT(self):
+            return self.getToken(ExprParser.NOT, 0)
+
         def NEWLINE(self, i:int=None):
             if i is None:
                 return self.getTokens(ExprParser.NEWLINE)
@@ -782,47 +789,55 @@ class ExprParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 82
             self.match(ExprParser.IF)
-            self.state = 83
-            self.match(ExprParser.LPAREN)
             self.state = 84
-            self.condition(0)
-            self.state = 85
-            self.match(ExprParser.RPAREN)
-            self.state = 86
-            self.match(ExprParser.LCURL)
-            self.state = 90
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,6,self._ctx)
-            while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
-                if _alt==1:
-                    self.state = 87
-                    self.match(ExprParser.NEWLINE) 
-                self.state = 92
-                self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,6,self._ctx)
+            _la = self._input.LA(1)
+            if _la==ExprParser.NOT:
+                self.state = 83
+                self.match(ExprParser.NOT)
 
-            self.state = 96
+
+            self.state = 86
+            self.match(ExprParser.LPAREN)
+            self.state = 87
+            self.condition(0)
+            self.state = 88
+            self.match(ExprParser.RPAREN)
+            self.state = 89
+            self.match(ExprParser.LCURL)
+            self.state = 93
             self._errHandler.sync(self)
             _alt = self._interp.adaptivePredict(self._input,7,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
-                    self.state = 93
-                    self.expr() 
-                self.state = 98
+                    self.state = 90
+                    self.match(ExprParser.NEWLINE) 
+                self.state = 95
                 self._errHandler.sync(self)
                 _alt = self._interp.adaptivePredict(self._input,7,self._ctx)
 
-            self.state = 102
+            self.state = 99
+            self._errHandler.sync(self)
+            _alt = self._interp.adaptivePredict(self._input,8,self._ctx)
+            while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
+                if _alt==1:
+                    self.state = 96
+                    self.expr() 
+                self.state = 101
+                self._errHandler.sync(self)
+                _alt = self._interp.adaptivePredict(self._input,8,self._ctx)
+
+            self.state = 105
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==ExprParser.NEWLINE:
-                self.state = 99
+                self.state = 102
                 self.match(ExprParser.NEWLINE)
-                self.state = 104
+                self.state = 107
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 105
+            self.state = 108
             self.match(ExprParser.RCURL)
         except RecognitionException as re:
             localctx.exception = re
@@ -888,16 +903,16 @@ class ExprParser ( Parser ):
         self.enterRecursionRule(localctx, 18, self.RULE_condition, _p)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 108
+            self.state = 111
             self.literals(0)
-            self.state = 109
+            self.state = 112
             self.comparisson_type()
-            self.state = 110
+            self.state = 113
             self.literals(0)
             self._ctx.stop = self._input.LT(-1)
-            self.state = 118
+            self.state = 121
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,9,self._ctx)
+            _alt = self._interp.adaptivePredict(self._input,10,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
                     if self._parseListeners is not None:
@@ -905,17 +920,17 @@ class ExprParser ( Parser ):
                     _prevctx = localctx
                     localctx = ExprParser.ConditionContext(self, _parentctx, _parentState)
                     self.pushNewRecursionContext(localctx, _startState, self.RULE_condition)
-                    self.state = 112
+                    self.state = 115
                     if not self.precpred(self._ctx, 1):
                         from antlr4.error.Errors import FailedPredicateException
                         raise FailedPredicateException(self, "self.precpred(self._ctx, 1)")
-                    self.state = 113
+                    self.state = 116
                     self.logic_operators()
-                    self.state = 114
+                    self.state = 117
                     self.condition(2) 
-                self.state = 120
+                self.state = 123
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,9,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input,10,self._ctx)
 
         except RecognitionException as re:
             localctx.exception = re
@@ -949,6 +964,9 @@ class ExprParser ( Parser ):
 
         def RCURL(self):
             return self.getToken(ExprParser.RCURL, 0)
+
+        def NOT(self):
+            return self.getToken(ExprParser.NOT, 0)
 
         def NEWLINE(self, i:int=None):
             if i is None:
@@ -990,49 +1008,57 @@ class ExprParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 121
-            self.match(ExprParser.WHILE)
-            self.state = 122
-            self.match(ExprParser.LPAREN)
-            self.state = 123
-            self.condition(0)
             self.state = 124
-            self.match(ExprParser.RPAREN)
-            self.state = 125
-            self.match(ExprParser.LCURL)
-            self.state = 129
+            self.match(ExprParser.WHILE)
+            self.state = 126
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,10,self._ctx)
-            while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
-                if _alt==1:
-                    self.state = 126
-                    self.match(ExprParser.NEWLINE) 
-                self.state = 131
-                self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,10,self._ctx)
+            _la = self._input.LA(1)
+            if _la==ExprParser.NOT:
+                self.state = 125
+                self.match(ExprParser.NOT)
 
+
+            self.state = 128
+            self.match(ExprParser.LPAREN)
+            self.state = 129
+            self.condition(0)
+            self.state = 130
+            self.match(ExprParser.RPAREN)
+            self.state = 131
+            self.match(ExprParser.LCURL)
             self.state = 135
             self._errHandler.sync(self)
-            _alt = self._interp.adaptivePredict(self._input,11,self._ctx)
+            _alt = self._interp.adaptivePredict(self._input,12,self._ctx)
             while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
                 if _alt==1:
                     self.state = 132
-                    self.expr() 
+                    self.match(ExprParser.NEWLINE) 
                 self.state = 137
                 self._errHandler.sync(self)
-                _alt = self._interp.adaptivePredict(self._input,11,self._ctx)
+                _alt = self._interp.adaptivePredict(self._input,12,self._ctx)
 
             self.state = 141
             self._errHandler.sync(self)
+            _alt = self._interp.adaptivePredict(self._input,13,self._ctx)
+            while _alt!=2 and _alt!=ATN.INVALID_ALT_NUMBER:
+                if _alt==1:
+                    self.state = 138
+                    self.expr() 
+                self.state = 143
+                self._errHandler.sync(self)
+                _alt = self._interp.adaptivePredict(self._input,13,self._ctx)
+
+            self.state = 147
+            self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==ExprParser.NEWLINE:
-                self.state = 138
+                self.state = 144
                 self.match(ExprParser.NEWLINE)
-                self.state = 143
+                self.state = 149
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 144
+            self.state = 150
             self.match(ExprParser.RCURL)
         except RecognitionException as re:
             localctx.exception = re
