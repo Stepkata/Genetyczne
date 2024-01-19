@@ -97,8 +97,6 @@ class BiggerGP:
             else:
                 new_rule = random.choice(variables_pom)
         if rule == 2:
-            print("New_rule:", new_rule)
-            print("Rules:", self.grammar[rule])
             index = len(self.variables) + 10000
             self.variables[index] = random.choice(
                 string.ascii_letters)  # if we are creating variable, add its name to register
@@ -169,9 +167,8 @@ class BiggerGP:
             self.population.append(self.generate_random_individual())
 
     def fitness_pop(self, fitness_f) -> None:
-    
         for specimen in self.population:
-            self.pop_fitness.append(fitness_f(specimen))
+            self.pop_fitness.append(self.fitness(specimen, fitness_f))
 
     def fitness(self, specimen, fitness_f) -> float:
         return fitness_f(specimen)
@@ -181,32 +178,49 @@ class BiggerGP:
 
     def crossover(self, specimen1, specimen2) -> list:
         new_specimen = []
-        indexes1 = []
-        indexes2 = []
-        indexes1 = [index for index, item in enumerate(specimen1) if item in self.node_starts]
-        indexes2 = [index for index, item in enumerate(specimen2) if item in self.node_starts]
-        for i in range(len(specimen1)-2):
-            if specimen1[i] >= 10000 and specimen1[i+1] == 600:
-                indexes1.append(i)
-        for i in range(len(specimen2)-2):
-            if specimen2[i] >= 10000 and specimen2[i+1] == 600:
-                indexes2.append(i)
-        if (len(indexes1) == 0):
-            return specimen2
-        if (len(indexes2) == 0):
-            return specimen1
-        index1 = random.choice(indexes1)
-        index2 = random.choice(indexes2)
-        if len(specimen2) - 1 == index2:
-            new_specimen = specimen1[:index1] + specimen2
-        elif index1 == 0:
-            new_specimen = specimen1 + specimen2[index2:]
-        else:
-            new_specimen = specimen1[:index1] + specimen2[index2:]
+        (index1_start, index1_end) = self.find_index(specimen1)
+        (index2_start, index2_end) = self.find_index(specimen2)
         print("parent1", self.to_string(specimen1))
+        print("----------------------------------")
         print("parent2", self.to_string(specimen2))
+        print("start: ", specimen1[index1_start], "end: ", specimen1[index1_end])
+        new_specimen = specimen1[:index1_start] + specimen2[index2_start:index2_end] + specimen1[index1_end:]
+        print("----------------------------------")
         print("child", self.to_string(new_specimen))
         return new_specimen
+    
+    def find_index(self, specimen: []) -> int:
+        indexes = []
+        indexes = [index for index, item in enumerate(specimen) if item in self.node_starts]
+        for i in range(len(specimen)-2):
+            if specimen[i] >= 10000 and specimen[i+1] == 600:
+                indexes.append(i)
+        if (len(indexes) == 0):
+            return 0
+        index1 = random.choice(indexes)
+        if specimen[index1] in [1700, 1800]:
+            index_end = self.find_closing_parentheses(index1, specimen)
+        else:
+            index_end = self.find_closing_dot(index1, specimen)
+        return (index1, index_end)
+
+    def find_closing_dot(self, index: int, buffer: []) -> int:
+        for i in range(index, len(buffer)-1):
+            if buffer[i] == 2400:
+                return i        
+        return len(buffer)-1
+    
+    def find_closing_parentheses(self, index:int, buffer: []) -> int:
+        num_begin = 0
+        num_end = 0
+        for i in range(index, len(buffer)-2):
+            if buffer[i] == 900:
+                num_begin += 1
+            if buffer[i] == 1000:
+                num_end += 1
+            if (num_end != 0 and num_end == num_begin):
+                return i+1
+        return len(buffer)-1
 
     def mutation(self, specimen) -> list:
         print("Old", self.to_string(specimen))
@@ -308,10 +322,10 @@ class BiggerGP:
 if __name__ == "__main__":
     b = BiggerGP()
     specimen1 = b.generate_random_individual()
-    print(b.to_string(specimen1))
-    #specimen2 =  b.generate_random_individual()
+    #print(b.to_string(specimen1))
+    specimen2 =  b.generate_random_individual()
     #specimen3 =  b.generate_random_individual()
     #specimen4 =  b.generate_random_individual()
     #specimen5 =  b.generate_random_individual()
-    #b.crossover(specimen1, specimen2)
+    b.crossover(specimen1, specimen2)
     #b.mutation(specimen1)
