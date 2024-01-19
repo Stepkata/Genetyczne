@@ -7,7 +7,7 @@ class BiggerGP:
     ''' Class executing genetic algorithm using simple custom programming language'''
     def __init__(self, p_size: int = 25000, depth: int = 3):
         self.MAX_LEN: int = 2
-        self.MAX_LOGIC_LEN: int = 10
+        self.MAX_LOGIC_LEN: int = 5
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
         self.GENERATIONS: int = 50
@@ -66,10 +66,10 @@ class BiggerGP:
 
     def traverse(self, buffer) -> list:
         pom = []
-        for rule in buffer:
+        for index, rule in enumerate(buffer):
             if rule in self.grammar.keys():
                 new_rule = copy.deepcopy(random.choice(self.grammar[rule]))
-                new_rule = self.check_new_rule(buffer, new_rule, rule)
+                new_rule = self.check_new_rule(buffer, new_rule, rule, index)
                 pom.append(new_rule)
             else:
                 pom.append(rule)
@@ -86,11 +86,11 @@ class BiggerGP:
                 buffer.append(rule)
         return buffer
 
-    def check_new_rule(self, buffer, new_rule, rule) -> list:
+    def check_new_rule(self, buffer, new_rule, rule, index) -> list:
         if new_rule == [2100]:  # we cannot use variables we didn't declare
             variables_pom = []
             for var in self.variables_buffer:
-                if var in buffer and buffer.index(var) < buffer.index(rule):
+                if var in buffer and buffer.index(var) < index:
                     variables_pom.append(var)
             if len(variables_pom) == 0:
                 new_rule = 2200
@@ -104,17 +104,33 @@ class BiggerGP:
                 string.ascii_letters)  # if we are creating variable, add its name to register
             self.variables_buffer.append(index)
             new_rule[new_rule.index(2100)] = index
+        if rule == 9:
+            ind1 = 0
+            ind2 = len(buffer)-1
+            for i in range(0, index -1):
+                if buffer[i] == 700:
+                    ind1 = i
+                    break
+            for i in range(index,len(buffer)-1):
+                if buffer[i] == 800:
+                    ind2 = i
+                    break
+            neighbors = buffer[ind1:ind2]
+            num_logic = neighbors.count(1500) + neighbors.count(1600) + neighbors.count(5)
+            if num_logic >= self.MAX_LOGIC_LEN:
+                new_rule = [6, 7, 6]
+
         return new_rule
 
     def grow(self, buffer: []):
         pom = []  # make sure we do not create any more nodes
-        for rule in buffer:
+        for index, rule in enumerate(buffer):
             if rule in self.grammar.keys():
                 rules = [rule for rule in copy.deepcopy(self.grammar[rule]) if self.start not in rule]
                 if len(rules) == 0:
                     rules.append([1900]) #for safety
                 new_rule = random.choice(rules)
-                new_rule = self.check_new_rule(buffer, new_rule, rule)
+                new_rule = self.check_new_rule(buffer, new_rule, rule, index)
                 pom.append(new_rule)
             else:
                 pom.append(rule)
@@ -141,7 +157,9 @@ class BiggerGP:
 
     def generate_random_individual(self) -> list:
         self.variables_buffer = []
-        buffer = [self.start]
+        buffer = []
+        for _ in range(random.randint(1, self.MAX_LEN)):
+            buffer.append(self.start)
         print(buffer)
         return self.grow(buffer)
     
@@ -281,7 +299,7 @@ class BiggerGP:
                     new_fitness = self.fitness(new_individual, fitness_f)
                     offspring = self.negative_tournament(self.MATCH_SIZE)
                     self.population[offspring] = new_individual
-                    self.population[offspring] = new_fitness
+                    self.fitness[offspring] = new_fitness
         print("Problem NOT solved")
 
 
@@ -290,9 +308,10 @@ class BiggerGP:
 if __name__ == "__main__":
     b = BiggerGP()
     specimen1 = b.generate_random_individual()
-    specimen2 =  b.generate_random_individual()
-    specimen3 =  b.generate_random_individual()
-    specimen4 =  b.generate_random_individual()
-    specimen5 =  b.generate_random_individual()
+    print(b.to_string(specimen1))
+    #specimen2 =  b.generate_random_individual()
+    #specimen3 =  b.generate_random_individual()
+    #specimen4 =  b.generate_random_individual()
+    #specimen5 =  b.generate_random_individual()
     #b.crossover(specimen1, specimen2)
-    b.mutation(specimen1)
+    #b.mutation(specimen1)
