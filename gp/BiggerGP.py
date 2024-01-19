@@ -5,6 +5,7 @@ import string
 
 class BiggerGP:
     ''' Class executing genetic algorithm using simple custom programming language'''
+
     def __init__(self, p_size: int = 25000, depth: int = 3):
         self.MAX_LEN: int = 2
         self.MAX_LOGIC_LEN: int = 5
@@ -45,16 +46,21 @@ class BiggerGP:
 
         self.grammar = {
             0: [[1, 1900]],  # 'prog': ['expr NEWLINE'],
-            1: [[3, 2400, 1900], [8, 2400, 1900], [2, 2400, 1900], [10, 2400, 1900]], # 'expr': ['print COLON NEWLINE', 'if_statement COLON NEWLINE', 'variable_assign COLON NEWLINE', 'while COLON NEWLINE'],
-            2: [[2100, 600, 6], [2100, 600, 2300]], # 'variable_assign': ['IDENTIFIER EQ literals', 'IDENTIFIER EQ INPUT'],
+            1: [[3, 2400, 1900], [8, 2400, 1900], [2, 2400, 1900], [10, 2400, 1900]],
+            # 'expr': ['print COLON NEWLINE', 'if_statement COLON NEWLINE', 'variable_assign COLON NEWLINE', 'while COLON NEWLINE'],
+            2: [[2100, 600, 6], [2100, 600, 2300]],
+            # 'variable_assign': ['IDENTIFIER EQ literals', 'IDENTIFIER EQ INPUT'],
             3: [[2000, 700, 6, 800]],  # 'print': ['PRINT LPAREN literals RPAREN'],
             4: [[300], [400], [100], [500], [200]],  # 'operators': ['MULTIPLY', 'DIVIDE', 'ADD', 'MOD', 'SUBSTRACT'],
             5: [[1500], [1600]],  # 'logic_operators': ['AND', 'OR'],
             6: [[2100], [2200], [6, 4, 6]],  # 'literals': ['IDENTIFIER', 'INTLITERAL', 'literals operators literals'],
             7: [[1300], [1200], [1100], [1400]],  # 'comparisson_type': ['EQEQ', 'GTHAN', 'LTHAN', 'NOTEQ'],
-            8: [[1700, 700, 9, 800, 900, 1900, 1, 1900, 1000]], # 'if_statement': ['IF LPAREN condition RPAREN LCURL NEWLINE expr NEWLINE RCURL'],
-            9: [[6, 7, 6], [9, 5, 9]], # 'condition': ['literals comparisson_type literals', 'condition logic_operators condition'],
-            10: [[1800, 700, 9, 800, 900, 1900, 1, 1900, 1000]] # 'while': ['WHILE LPAREN  condition RPAREN LCURL NEWLINE  expr NEWLINE  RCURL']
+            8: [[1700, 700, 9, 800, 900, 1900, 1, 1900, 1000]],
+            # 'if_statement': ['IF LPAREN condition RPAREN LCURL NEWLINE expr NEWLINE RCURL'],
+            9: [[6, 7, 6], [9, 5, 9]],
+            # 'condition': ['literals comparisson_type literals', 'condition logic_operators condition'],
+            10: [[1800, 700, 9, 800, 900, 1900, 1, 1900, 1000]]
+            # 'while': ['WHILE LPAREN  condition RPAREN LCURL NEWLINE  expr NEWLINE  RCURL']
         }
 
         self.node_starts = [1700, 2000, 1800]
@@ -76,11 +82,6 @@ class BiggerGP:
         buffer = []
         for rule in pom:
             if isinstance(rule, list):
-                children = buffer.count(2400)
-                if self.start in rule and children < self.MAX_LEN:
-                    index = rule.index(self.start)
-                    for _ in range(random.randint(1, self.MAX_LEN - children)):
-                        rule.insert(index, self.start)
                 buffer += rule
             else:
                 buffer.append(rule)
@@ -104,12 +105,12 @@ class BiggerGP:
             new_rule[new_rule.index(2100)] = index
         if rule == 9:
             ind1 = 0
-            ind2 = len(buffer)-1
-            for i in range(0, index -1):
+            ind2 = len(buffer) - 1
+            for i in range(0, index - 1):
                 if buffer[i] == 700:
                     ind1 = i
                     break
-            for i in range(index,len(buffer)-1):
+            for i in range(index, len(buffer) - 1):
                 if buffer[i] == 800:
                     ind2 = i
                     break
@@ -126,7 +127,7 @@ class BiggerGP:
             if rule in self.grammar.keys():
                 rules = [rule for rule in copy.deepcopy(self.grammar[rule]) if self.start not in rule]
                 if len(rules) == 0:
-                    rules.append([1900]) #for safety
+                    rules.append([1900])
                 new_rule = random.choice(rules)
                 new_rule = self.check_new_rule(buffer, new_rule, rule, index)
                 pom.append(new_rule)
@@ -151,8 +152,6 @@ class BiggerGP:
         self.to_string(buffer)
         return buffer
 
-
-
     def generate_random_individual(self) -> list:
         self.variables_buffer = []
         buffer = []
@@ -160,7 +159,6 @@ class BiggerGP:
             buffer.append(self.start)
         print(buffer)
         return self.grow(buffer)
-    
 
     def populate_population(self) -> None:
         for _ in range(self.POP_SIZE):
@@ -188,44 +186,44 @@ class BiggerGP:
         print("----------------------------------")
         print("child", self.to_string(new_specimen))
         return new_specimen
-    
-    def find_index(self, specimen: []) -> int:
+
+    def find_index(self, specimen: []) -> tuple:
         indexes = []
         indexes = [index for index, item in enumerate(specimen) if item in self.node_starts]
-        for i in range(len(specimen)-2):
-            if specimen[i] >= 10000 and specimen[i+1] == 600:
+        for i in range(len(specimen) - 2):
+            if specimen[i] >= 10000 and specimen[i + 1] == 600:
                 indexes.append(i)
-        if (len(indexes) == 0):
-            return 0
+        if len(indexes) == 0:
+            return 0, 0
         index1 = random.choice(indexes)
         if specimen[index1] in [1700, 1800]:
             index_end = self.find_closing_parentheses(index1, specimen)
         else:
             index_end = self.find_closing_dot(index1, specimen)
-        return (index1, index_end)
+        return index1, index_end
 
     def find_closing_dot(self, index: int, buffer: []) -> int:
-        for i in range(index, len(buffer)-1):
+        for i in range(index, len(buffer) - 1):
             if buffer[i] == 2400:
-                return i        
-        return len(buffer)-1
-    
-    def find_closing_parentheses(self, index:int, buffer: []) -> int:
+                return i
+        return len(buffer) - 1
+
+    def find_closing_parentheses(self, index: int, buffer: []) -> int:
         num_begin = 0
         num_end = 0
-        for i in range(index, len(buffer)-2):
+        for i in range(index, len(buffer) - 2):
             if buffer[i] == 900:
                 num_begin += 1
             if buffer[i] == 1000:
                 num_end += 1
-            if (num_end != 0 and num_end == num_begin):
-                return i+1
-        return len(buffer)-1
+            if num_end != 0 and num_end == num_begin:
+                return i + 1
+        return len(buffer) - 1
 
     def mutation(self, specimen) -> list:
         print("Old", self.to_string(specimen))
         print("-------")
-        type = random.randint(0,2)
+        type = random.randint(0, 2)
         print(type)
         if type == 0:
             for i in range(len(specimen)):
@@ -236,13 +234,12 @@ class BiggerGP:
         if type == 1:
             (index1_start, index1_end) = self.find_index(specimen1)
             new_branch = self.grow(random.choice(self.grammar[self.start]))
-            new_speciman = specimen1[:index1_start] + new_branch + specimen1[index1_end+1:]
-            print(self.to_string(new_speciman))
-            return new_speciman
+            new_specimen = specimen1[:index1_start] + new_branch + specimen1[index1_end + 1:]
+            print(self.to_string(new_specimen))
+            return new_specimen
         if type == 2:
-            new_speciman = []
-            index1 = len(specimen)-1
-            index2 = len(specimen)-1
+            index1 = len(specimen) - 1
+            index2 = len(specimen) - 1
             for i in range(len(specimen)):
                 if specimen[i] == 700:
                     index1 = i
@@ -252,13 +249,13 @@ class BiggerGP:
             if index1 == index2:
                 print(self.to_string(specimen))
                 return specimen
-            if any([x >= 1100 and x <= 1600 for x in specimen[index1:index2]]):
+            if any([1100 <= x <= 1600 for x in specimen[index1:index2]]):
                 new_logic = self.grow([9])
             else:
                 new_logic = self.grow([6])
-            new_speciman = specimen[:index1+1] + new_logic + specimen[index2:]
-            print(self.to_string(new_speciman))
-            return new_speciman
+            new_specimen = specimen[:index1 + 1] + new_logic + specimen[index2:]
+            print(self.to_string(new_specimen))
+            return new_specimen
 
     def tournament(self, tournament_size: int):
         best = random.randint(0, len(self.population))
@@ -271,7 +268,7 @@ class BiggerGP:
 
         return self.population[best]
 
-    def negative_tournament(self, tournament_size:int):
+    def negative_tournament(self, tournament_size: int):
         worst = random.randint(0, len(self.population))
         worst_fit = -1.0e34
         for i in range(tournament_size):
@@ -312,19 +309,17 @@ class BiggerGP:
                     new_fitness = self.fitness(new_individual, fitness_f)
                     offspring = self.negative_tournament(self.MATCH_SIZE)
                     self.population[offspring] = new_individual
-                    self.fitness[offspring] = new_fitness
+                    self.pop_fitness[offspring] = new_fitness
         print("Problem NOT solved")
-
-
 
 
 if __name__ == "__main__":
     b = BiggerGP()
     specimen1 = b.generate_random_individual()
-    #print(b.to_string(specimen1))
-    specimen2 =  b.generate_random_individual()
-    #specimen3 =  b.generate_random_individual()
-    #specimen4 =  b.generate_random_individual()
-    #specimen5 =  b.generate_random_individual()
-    #b.crossover(specimen1, specimen2)
+    # print(b.to_string(specimen1))
+    specimen2 = b.generate_random_individual()
+    # specimen3 =  b.generate_random_individual()
+    # specimen4 =  b.generate_random_individual()
+    # specimen5 =  b.generate_random_individual()
+    # b.crossover(specimen1, specimen2)
     b.mutation(specimen1)
