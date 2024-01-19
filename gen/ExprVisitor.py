@@ -24,6 +24,7 @@ class ExprVisitor(ParseTreeVisitor):
         self.variables: List[Variable] = []
         self.outputs: List[int] = []
         self.max_loop_iter = max_loop_iter
+        self.counter = 0
 
     def findVariable(self, var_name: str) -> Tuple[bool, Union[Variable, None]]:
         """
@@ -326,11 +327,10 @@ class ExprVisitor(ParseTreeVisitor):
             ctx (ExprParser.While_loopContext): The parse tree context.
         """
         condition = self.visitCondition(ctx.condition())
-        counter = 0;
         if ctx.NOT() is not None:
             condition = not condition
-        while condition and counter < self.max_loop_iter:
-            counter += 1
+        while condition and self.counter < self.max_loop_iter:
+            self.counter += 1
             self.visitChildren(ctx)
             condition = self.visitCondition(ctx.condition())
             if ctx.NOT() is not None:
