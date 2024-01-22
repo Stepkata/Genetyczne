@@ -1,16 +1,5 @@
-x = 3 + 3 / 3 * 3.
-print(x).
-
-silnia = 5 .
-value = 1.
-while ! (silnia == 0) {
-    value = value * silnia.
-    silnia = silnia - 1.
-    print(value).
-}.
-
-i = 0 .
-while( i < 20 ){
-    print(i).
-    i = i + 1.
-}.
+if ( 63 != 67 && 26 / 54 / 24 - 0 > 22 / 18 % 98 % 91 % 59 - 28 && 11 != 25 / 0 + 63 % 48 || 5 < 31 && 50 != 84 % 81 * 29 % 48 || 95 < 17 + 60 * 36 && 60 % 6 - 33 + 15 / 8 < 21 ) { 
+ print ( 97 ) . 
+ 
+ } . 
+ print ( 44 % 72 - 30 - 13 ) . 

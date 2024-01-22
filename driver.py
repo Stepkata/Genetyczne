@@ -13,6 +13,8 @@ def main(filename):
     visitor = ExprVisitor()
     output = visitor.visit(tree)
     print(output)
+    print( 1 in output)
+    print(1 in [-2.032727272727479, 1])
 
 
 if __name__ == '__main__':
