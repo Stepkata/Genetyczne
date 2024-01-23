@@ -1,4 +1,5 @@
 class Stats:
+    """Custom class to gather statistics for BiggerGP"""
     def __init__(self, solved, generation, best_fit, best_indiv, avg_fit, pops, d):
         self.solved: bool = solved
         self.generation: int = generation

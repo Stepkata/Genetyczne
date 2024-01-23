@@ -331,6 +331,7 @@ class BiggerGP:
                 pom.append(str(term))
         return ' '.join(pom)
 
+    """Gather current generation stats"""
     def get_stats(self, solved, generation):
         best_indiv = self.get_best_individual()
         best_fit = self.get_best_fitness()

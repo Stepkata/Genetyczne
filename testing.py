@@ -6,7 +6,7 @@ from gp.BiggerGP import BiggerGP
 import matplotlib.pyplot as plt
 
 
-def fitness_function(program):
+def fitness_function_1(program):
     try:
         lexer = ExprLexer(InputStream(program))
         stream = CommonTokenStream(lexer)
@@ -43,7 +43,7 @@ def visualize_fitness(generations, avg_fitness, best_fitness, paragraph, save_pa
 
 if __name__ == '__main__':
     gp = BiggerGP()
-    stats = gp.evolve(fitness_function)
+    stats = gp.evolve(fitness_function_1)
     gen = [stat.generation for stat in stats]
     best_fit = [stat.best_fitness for stat in stats]
     avg_fit = [stat.avg_fitness for stat in stats]
