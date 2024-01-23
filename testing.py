@@ -20,7 +20,10 @@ def fitness_function_1(program):
         else:
             return -10 * (abs(min(output)) + 1)
     except Exception as e:
-        # print(e)
+        print("------------------------------------------")
+        print(e)
+        print(program)
+        print("------------------------------------------")
         return -1000
 
 
@@ -40,8 +43,7 @@ def fitness_function_2(program):
                 return -10000
             else:
                 return -10 * (sum([abs(x-789) for x in output])/10 + 1)
-    except Exception as e:
-        # print(e)
+    except TypeError as e:
         return -1000
 
 
