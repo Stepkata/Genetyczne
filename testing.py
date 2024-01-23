@@ -59,7 +59,10 @@ def fitness_function_3(program):
         if 31415 in output:
             return 0
         else:
-            return -10 * (1 / abs(max(output)) + 1)
+            if len(output) == 0:
+                return -10000
+            else:
+                return -10 * (sum([abs(x - 31415) for x in output]) / 1000 + 1)
     except Exception as e:
         # print(e)
         return -1000
@@ -151,10 +154,10 @@ def test(function, ex: str, filename):
 if __name__ == '__main__':
     #test(fitness_function_1, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
     #                       "liczbę 1. Poza liczbą 1 może też zwrócić inne liczby.", "1.1.A")
-    test(fitness_function_2, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
-                             "liczbę 789. Poza liczbą 789 może też zwrócić inne liczby.", "1.1.B")
-    #test(fitness_function_3, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
-    #                         "liczbę 31415. Poza liczbą 31415 może też zwrócić inne liczby.", "1.1.C")
+    #test(fitness_function_2, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
+    #                         "liczbę 789. Poza liczbą 789 może też zwrócić inne liczby.", "1.1.B")
+    test(fitness_function_3, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
+                             "liczbę 31415. Poza liczbą 31415 może też zwrócić inne liczby.", "1.1.C")
     #test(fitness_function_4, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 1. "
     #                         "Poza liczbą 1 może też zwrócić inne liczby.", "1.1.D")
     #test(fitness_function_5, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 789. "

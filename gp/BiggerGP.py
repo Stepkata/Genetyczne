@@ -7,12 +7,12 @@ from gp.Stats import Stats
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 500, depth: int = 4):
+    def __init__(self, p_size: int = 1000, depth: int = 4):
         self.MAX_LEN: int = 4
         self.MAX_LOGIC_LEN: int = 5
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
-        self.GENERATIONS: int = 50
+        self.GENERATIONS: int = 100
         self.MATCH_SIZE: int = 2
         self.MUTATION_RATE: int = 10
 
@@ -162,7 +162,7 @@ class BiggerGP:
         for i in range(len(buffer)):  # choose some ints
             if buffer[i] == 2200:
                 index = len(self.int_literals) + 100000
-                self.int_literals[index] = random.randint(0, 10000)  # can be changed
+                self.int_literals[index] = random.randint(0, 100000)  # can be changed
                 buffer[i] = index
 
         self.to_string(buffer)
