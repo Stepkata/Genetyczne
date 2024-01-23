@@ -7,14 +7,14 @@ from gp.Stats import Stats
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 250, depth: int = 3):
-        self.MAX_LEN: int = 2
+    def __init__(self, p_size: int = 500, depth: int = 4):
+        self.MAX_LEN: int = 4
         self.MAX_LOGIC_LEN: int = 5
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
         self.GENERATIONS: int = 50
         self.MATCH_SIZE: int = 2
-        self.MUTATION_RATE: int = 5
+        self.MUTATION_RATE: int = 10
 
         self.pop_fitness: list = []
         self.population: list = []
@@ -162,7 +162,7 @@ class BiggerGP:
         for i in range(len(buffer)):  # choose some ints
             if buffer[i] == 2200:
                 index = len(self.int_literals) + 100000
-                self.int_literals[index] = random.randint(0, 100)  # can be changed
+                self.int_literals[index] = random.randint(0, 10000)  # can be changed
                 buffer[i] = index
 
         self.to_string(buffer)
@@ -180,6 +180,7 @@ class BiggerGP:
             self.population.append(self.generate_random_individual())
 
     def calculate_pop_fitness(self, fitness_f) -> None:
+        self.pop_fitness = []
         for specimen in self.population:
             self.pop_fitness.append(self.fitness(specimen, fitness_f))
 
@@ -196,7 +197,13 @@ class BiggerGP:
         return sum(self.pop_fitness) / len(self.pop_fitness)
 
     def get_best_individual(self) -> list:
-        index = self.pop_fitness.index(max(self.pop_fitness))
+        if len(self.pop_fitness) != len(self.population):
+            raise Exception("Population does not equal fitness")
+        max_fitness = max(self.pop_fitness, default=None)
+        if max_fitness is None:
+            index = 0
+        else:
+            index = self.pop_fitness.index(max_fitness)
         return self.population[index]
 
     """Swaps branches between parent1 and parent1"""
@@ -216,6 +223,14 @@ class BiggerGP:
 
     """Finds the beginning and end of the statement (branch) that will be swapped"""
 
+    def clean_individual(self, buffer):
+        result = copy.deepcopy(buffer)
+        for i in range(len(buffer)-2):
+            if buffer[i] == 1900 and buffer[i+1] == 1900:
+                result = result[:i] + result[i+1:]
+            elif buffer[i] == 1900 and buffer[i+1] != 2400:
+                result = result[:i] + [2400] + result[i:]
+        return result
     def find_index(self, specimen: []) -> tuple:
         indexes = [index for index, item in enumerate(specimen) if item in self.node_starts]
         for i in range(len(specimen) - 2):
@@ -372,10 +387,10 @@ class BiggerGP:
 if __name__ == "__main__":
     b = BiggerGP()
     specimen1 = b.generate_random_individual()
-    # print(b.to_string(specimen1))
-    specimen2 = b.generate_random_individual()
+    print(b.to_string(specimen1))
+    #specimen2 = b.generate_random_individual()
     # specimen3 =  b.generate_random_individual()
     # specimen4 =  b.generate_random_individual()
     # specimen5 =  b.generate_random_individual()
     # b.crossover(specimen1, specimen2)
-    b.mutation(specimen1)
+    #b.mutation(specimen1)
