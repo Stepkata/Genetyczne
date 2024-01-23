@@ -23,6 +23,75 @@ def fitness_function_1(program):
         #print(e)
         return -1000
 
+def fitness_function_2(program):
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        visitor = ExprVisitor()
+        output = visitor.visit(tree)
+        #print("Output: ", output)
+        if 789 in output:
+            return 0
+        else:
+            return -10*(1/abs(max(output))+1)
+    except Exception as e:
+        #print(e)
+        return -1000
+
+def fitness_function_3(program):
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        visitor = ExprVisitor()
+        output = visitor.visit(tree)
+        #print("Output: ", output)
+        if 31415 in output:
+            return 0
+        else:
+            return -10*(1/abs(max(output))+1)
+    except Exception as e:
+        #print(e)
+        return -1000
+
+def fitness_function_4(program):
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        visitor = ExprVisitor()
+        output = visitor.visit(tree)
+        #print("Output: ", output)
+        if output[0] == 1:
+            return 0
+        else:
+            return -10*(abs(min(output))+1)
+    except Exception as e:
+        #print(e)
+        return -1000
+
+def fitness_function_5(program):
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        visitor = ExprVisitor()
+        output = visitor.visit(tree)
+        #print("Output: ", output)
+        if output[0] == 1 and len(output) == 1:
+            return 0
+        elif len(output) == 1:
+            return -10*(abs(min(output))+1)
+        else:
+            return -100 * (abs(min(output)) + 1)
+    except Exception as e:
+        #print(e)
+        return -1000
 
 def visualize_fitness(generations, avg_fitness, best_fitness, paragraph, save_path='gp/output/fitness_visualization.png'):
     plt.figure(figsize=(8, 6))
@@ -43,7 +112,7 @@ def visualize_fitness(generations, avg_fitness, best_fitness, paragraph, save_pa
 
 if __name__ == '__main__':
     gp = BiggerGP()
-    stats = gp.evolve(fitness_function_1)
+    stats = gp.evolve(fitness_function_2)
     gen = [stat.generation for stat in stats]
     best_fit = [stat.best_fitness for stat in stats]
     avg_fit = [stat.avg_fitness for stat in stats]
