@@ -60,9 +60,9 @@ def fitness_function_3(program):
             return 0
         else:
             if len(output) == 0:
-                return -10000
+                return -1000
             else:
-                return -10 * (sum([abs(x - 31415) for x in output]) / 1000 + 1)
+                return min(-10 * (min([abs(abs(x) - 31415) for x in output]) + 1), -1000)
     except Exception as e:
         # print(e)
         return -1000
