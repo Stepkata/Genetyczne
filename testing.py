@@ -97,7 +97,10 @@ def fitness_function_5(program):
         if output[0] == 789:
             return 0
         else:
-            return -10 * (abs(min(output)) + 1)
+            if len(output) == 0:
+                return -10000
+            else:
+                return -10 * (abs(output[0] - 789) / 100 + 1)
     except Exception as e:
         # print(e)
         return -1000
@@ -156,11 +159,11 @@ if __name__ == '__main__':
     #                       "liczbę 1. Poza liczbą 1 może też zwrócić inne liczby.", "1.1.A")
     #test(fitness_function_2, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
     #                         "liczbę 789. Poza liczbą 789 może też zwrócić inne liczby.", "1.1.B")
-    test(fitness_function_3, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
-                             "liczbę 31415. Poza liczbą 31415 może też zwrócić inne liczby.", "1.1.C")
+    #test(fitness_function_3, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
+    #                         "liczbę 31415. Poza liczbą 31415 może też zwrócić inne liczby.", "1.1.C")
     #test(fitness_function_4, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 1. "
     #                         "Poza liczbą 1 może też zwrócić inne liczby.", "1.1.D")
-    #test(fitness_function_5, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 789. "
-    #                         "Poza liczbą 789 może też zwrócić inne liczby.", "1.1.E")
+    test(fitness_function_5, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 789. "
+                             "Poza liczbą 789 może też zwrócić inne liczby.", "1.1.E")
     #test(fitness_function_6, "Program powinien wygenerować na wyjściu liczbę jako jedyną liczbę 1. "
     #                         "Poza liczbą 1 NIE powinien nic więcej wygenerować.", "1.1.F")

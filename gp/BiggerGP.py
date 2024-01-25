@@ -162,7 +162,7 @@ class BiggerGP:
         for i in range(len(buffer)):  # choose some ints
             if buffer[i] == 2200:
                 index = len(self.int_literals) + 100000
-                self.int_literals[index] = random.randint(0, 100000)  # can be changed
+                self.int_literals[index] = random.randint(0, 1000)  # can be changed
                 buffer[i] = index
 
         self.to_string(buffer)
