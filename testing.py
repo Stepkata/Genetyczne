@@ -133,13 +133,13 @@ def fitness_function_7(program):
         visitor = ExprVisitor()
         output, input = visitor.visit(tree)
         num_readings = program.count("input()")
-        print(input)
+        
 
         # print("Output: ", output)
         if output[0] == input[0] + input[1] and num_readings==2 and len(output) == 1:
             return 0
         elif len(output) == 1:
-            return max(-10 * (num_readings + abs(output[0])-(input[0] + input[1])+ 1), -100)
+            return max(-10 * (num_readings + abs(abs(output[0])-(input[0] + input[1]))+ 1), -100)
         else:
             return -1000
     except Exception as e:
@@ -160,7 +160,7 @@ def fitness_function_8(program):
         if output[0] == input[0] - input[1] and num_readings==2 and len(output) == 1:
             return 0
         elif len(output) == 1:
-            return max(-10 * (num_readings + abs(output[0])-(input[0] - input[1])+ 1), -100)
+            return max(-10 * (num_readings + abs(abs(output[0])-(input[0] - input[1]))+ 1), -100)
         else:
             return -1000
     except Exception as e:
@@ -181,7 +181,7 @@ def fitness_function_9(program):
         if output[0] == max(input[0],input[1]) and num_readings==2 and len(output) == 1:
             return 0
         elif len(output) == 1:
-            return max(-10 * (num_readings * abs(output[0])-max(input[0],input[1])+ 1), -100)
+            return max(-10 * (num_readings * abs(abs(output[0])-max(input[0],input[1]))+ 1), -100)
         else:
             return -1000
     except Exception as e:
