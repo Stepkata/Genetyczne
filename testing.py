@@ -13,7 +13,7 @@ def fitness_function_1(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         visitor = ExprVisitor()
-        output = visitor.visit(tree)
+        output, _ = visitor.visit(tree)
         # print("Output: ", output)
         if 1 in output:
             return 0
@@ -34,7 +34,7 @@ def fitness_function_2(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         visitor = ExprVisitor()
-        output = visitor.visit(tree)
+        output, _ = visitor.visit(tree)
         # print("Output: ", output)
         if 789 in output:
             return 0
@@ -54,7 +54,7 @@ def fitness_function_3(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         visitor = ExprVisitor()
-        output = visitor.visit(tree)
+        output, _ = visitor.visit(tree)
         # print("Output: ", output)
         if 31415 in output:
             return 0
@@ -75,7 +75,7 @@ def fitness_function_4(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         visitor = ExprVisitor()
-        output = visitor.visit(tree)
+        output, _ = visitor.visit(tree)
         # print("Output: ", output)
         if output[0] == 1:
             return 0
@@ -92,7 +92,7 @@ def fitness_function_5(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         visitor = ExprVisitor()
-        output = visitor.visit(tree)
+        output, _ = visitor.visit(tree)
         # print("Output: ", output)
         if output[0] == 789:
             return 0
@@ -112,7 +112,7 @@ def fitness_function_6(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         visitor = ExprVisitor()
-        output = visitor.visit(tree)
+        output, _ = visitor.visit(tree)
         # print("Output: ", output)
         if output[0] == 1 and len(output) == 1:
             return 0
@@ -123,6 +123,27 @@ def fitness_function_6(program):
     except Exception as e:
         # print(e)
         return -1000
+    
+def fitness_function_7(program):
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        visitor = ExprVisitor()
+        output, input = visitor.visit(tree)
+        num_readings = program.count("input()")
+
+        # print("Output: ", output)
+        if output[0] == input[0] + input[1] and num_readings==2 and len(output) == 1:
+            return 0
+        elif len(output) == 1:
+            return max(-10 * (num_readings + abs(output[0])-(input[0] + input[1])+ 1), -100)
+        else:
+            return -1000
+    except Exception as e:
+        # print(e)
+        return -1000 
 
 
 def visualize_fitness(generations, avg_fitness, best_fitness, stats, ex="", success=True,
@@ -163,7 +184,10 @@ if __name__ == '__main__':
     #                         "liczbę 31415. Poza liczbą 31415 może też zwrócić inne liczby.", "1.1.C")
     #test(fitness_function_4, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 1. "
     #                         "Poza liczbą 1 może też zwrócić inne liczby.", "1.1.D")
-    test(fitness_function_5, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 789. "
-                             "Poza liczbą 789 może też zwrócić inne liczby.", "1.1.E")
+    #test(fitness_function_5, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 789. "
+    #                         "Poza liczbą 789 może też zwrócić inne liczby.", "1.1.E")
     #test(fitness_function_6, "Program powinien wygenerować na wyjściu liczbę jako jedyną liczbę 1. "
     #                         "Poza liczbą 1 NIE powinien nic więcej wygenerować.", "1.1.F")
+    test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]", "1.2.A")
+    pass

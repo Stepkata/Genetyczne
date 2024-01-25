@@ -11,7 +11,7 @@ def main(filename):
     parser = ExprParser(stream)
     tree = parser.prog()
     visitor = ExprVisitor()
-    output = visitor.visit(tree)
+    output, _ = visitor.visit(tree)
     print(output)
 
 
