@@ -4,6 +4,7 @@ from gen.ExprParser import ExprParser
 from gen.ExprVisitor import ExprVisitor
 from gp.BiggerGP import BiggerGP
 import matplotlib.pyplot as plt
+import re
 
 
 def fitness_function_1(program):
@@ -42,7 +43,7 @@ def fitness_function_2(program):
             if len(output) == 0:
                 return -10000
             else:
-                return -10 * (sum([abs(x-789) for x in output])/10 + 1)
+                return -10 * (sum([abs(x - 789) for x in output]) / 10 + 1)
     except TypeError as e:
         return -1000
 
@@ -85,6 +86,7 @@ def fitness_function_4(program):
         # print(e)
         return -1000
 
+
 def fitness_function_5(program):
     try:
         lexer = ExprLexer(InputStream(program))
@@ -105,6 +107,7 @@ def fitness_function_5(program):
         # print(e)
         return -1000
 
+
 def fitness_function_6(program):
     try:
         lexer = ExprLexer(InputStream(program))
@@ -123,7 +126,8 @@ def fitness_function_6(program):
     except Exception as e:
         # print(e)
         return -1000
-    
+
+
 def fitness_function_7(program):
     try:
         lexer = ExprLexer(InputStream(program))
@@ -133,19 +137,19 @@ def fitness_function_7(program):
         visitor = ExprVisitor()
         output, input = visitor.visit(tree)
         num_readings = program.count("input()")
-        
 
         # print("Output: ", output)
-        if output[0] == input[0] + input[1] and num_readings==2 and len(output) == 1:
+        if output[0] == input[0] + input[1] and num_readings == 2 and len(output) == 1:
             return 0
         elif len(output) == 1:
-            return max(-10 * (num_readings + abs(abs(output[0])-(input[0] + input[1]))+ 1), -100)
+            return max(-10 * (num_readings + abs(abs(output[0]) - (input[0] + input[1])) + 1), -100)
         else:
             return -1000
     except Exception as e:
         # print(e)
-        return -1000 
-    
+        return -1000
+
+
 def fitness_function_8(program):
     try:
         lexer = ExprLexer(InputStream(program))
@@ -157,16 +161,17 @@ def fitness_function_8(program):
         num_readings = program.count("input()")
 
         # print("Output: ", output)
-        if output[0] == input[0] - input[1] and num_readings==2 and len(output) == 1:
+        if output[0] == input[0] - input[1] and num_readings == 2 and len(output) == 1:
             return 0
         elif len(output) == 1:
-            return max(-10 * (num_readings + abs(abs(output[0])-(input[0] - input[1]))+ 1), -100)
+            return max(-10 * (num_readings + abs(abs(output[0]) - (input[0] - input[1])) + 1), -100)
         else:
             return -1000
     except Exception as e:
         # print(e)
-        return -1000 
-    
+        return -1000
+
+
 def fitness_function_9(program):
     try:
         lexer = ExprLexer(InputStream(program))
@@ -178,16 +183,84 @@ def fitness_function_9(program):
         num_readings = program.count("input()")
 
         # print("Output: ", output)
-        if output[0] == max(input[0],input[1]) and num_readings==2 and len(output) == 1:
+        if output[0] == max(input[0], input[1]) and num_readings == 2 and len(output) == 1:
             return 0
         elif len(output) == 1:
-            return max(-10 * (num_readings * abs(abs(output[0])-max(input[0],input[1]))+ 1), -100)
+            return max(-10 * (num_readings * abs(abs(output[0]) - max(input[0], input[1])) + 1), -100)
         else:
             return -1000
     except Exception as e:
         # print(e)
-        return -1000 
-    
+        return -1000
+
+
+def check_for_variables(program):
+    pattern = re.compile(r'print\(([^)]+)\)')
+
+    # Find all matches in the input string
+    matches = pattern.findall(program)
+
+    # Check if there are any letters in <something> for each match
+    for match in matches:
+        if any(c.isalpha() for c in match):
+            return 0
+
+    return 20
+
+
+def benchmark1(program):
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        visitor = ExprVisitor()
+        fitness = 0
+        for _ in range(3):
+            output, program_input = visitor.visit(tree)
+            num_readings = program.count("input()")
+
+            # print("Output: ", output)
+            if output[0] == program_input[0] + program_input[1] / program_input[2] and num_readings == 3 and len(
+                    output) == 1:
+                fitness += 0
+            elif len(output) == 1 or num_readings == 3:
+                fitness += max(-10 * (num_readings * abs(
+                    abs(output[0]) - (program_input[0] + program_input[1] / program_input[2])) + 1
+                                      + check_for_variables(program)), -100)
+            else:
+                fitness += -1000
+        return fitness
+    except Exception as e:
+        # print(e)
+        return -1000
+
+
+def benchmark3(program):
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        visitor = ExprVisitor()
+        fitness = 0
+        for _ in range(3):
+            output, program_input = visitor.visit(tree)
+            num_readings = program.count("input()")
+
+            # print("Output: ", output)
+            if output[0] == min(program_input) and num_readings == 4 and len(
+                    output) == 1:
+                fitness += 0
+            elif len(output) == 1 or num_readings == 4:
+                fitness += max(-10 * (num_readings * abs(
+                    abs(output[0]) - min(program_input)) + 1 + check_for_variables(program)), -100)
+            else:
+                fitness += -1000
+        return fitness
+    except Exception as e:
+        # print(e)
+        return -1000
 
 
 def visualize_fitness(generations, avg_fitness, best_fitness, stats, ex="", success=True,
@@ -216,34 +289,40 @@ def test(function, ex: str, filename):
     gen = [stat.generation for stat in stats]
     best_fit = [stat.best_fitness for stat in stats]
     avg_fit = [stat.avg_fitness for stat in stats]
-    visualize_fitness(gen, avg_fit, best_fit, stats[-1].to_string(), ex, stats[-1].solved, 'gp/output/'+filename+'.png')
+    visualize_fitness(gen, avg_fit, best_fit, stats[-1].to_string(), ex, stats[-1].solved,
+                      'gp/output/' + filename + '.png')
 
 
 if __name__ == '__main__':
-    #test(fitness_function_1, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
+    # test(fitness_function_1, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
     #                       "liczbę 1. Poza liczbą 1 może też zwrócić inne liczby.", "1.1.A")
-    #test(fitness_function_2, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
+    # test(fitness_function_2, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
     #                         "liczbę 789. Poza liczbą 789 może też zwrócić inne liczby.", "1.1.B")
-    #test(fitness_function_3, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
+    # test(fitness_function_3, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
     #                         "liczbę 31415. Poza liczbą 31415 może też zwrócić inne liczby.", "1.1.C")
-    #test(fitness_function_4, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 1. "
+    # test(fitness_function_4, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 1. "
     #                         "Poza liczbą 1 może też zwrócić inne liczby.", "1.1.D")
-    #test(fitness_function_5, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 789. "
+    # test(fitness_function_5, "Program powinien wygenerować na pierwszej pozycji na wyjściu liczbę 789. "
     #                         "Poza liczbą 789 może też zwrócić inne liczby.", "1.1.E")
-    #test(fitness_function_6, "Program powinien wygenerować na wyjściu liczbę jako jedyną liczbę 1. "
+    # test(fitness_function_6, "Program powinien wygenerować na wyjściu liczbę jako jedyną liczbę 1. "
     #                         "Poza liczbą 1 NIE powinien nic więcej wygenerować.", "1.1.F")
-    test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]", "1.2.A")
-    test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]", "1.2.B")
-    test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]", "1.2.C")
-    test(fitness_function_8, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-         "(jedynie) ich różnicę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]", "1.2.D")
-    test(fitness_function_8, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-         "(jedynie) ich iloczyn. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]", "1.2.E")
-    test(fitness_function_9, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
-         " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]", "1.3.A")
-    
-    
+    # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
+    #     "1.2.A")
+    # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]",
+    #     "1.2.B")
+    # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
+    #     "1.2.C")
+    # test(fitness_function_8, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                         "(jedynie) ich różnicę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
+    #     "1.2.D")
+    # test(fitness_function_8, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                         "(jedynie) ich iloczyn. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
+    #     "1.2.E")
+    # test(fitness_function_9, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
+    #                         " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
+    #     "1.3.A")
+    test(benchmark1, "Given an integer and a float, print their sum", "B.1")
     pass

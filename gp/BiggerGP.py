@@ -3,16 +3,22 @@ import random
 import string
 from gp.Stats import Stats
 
+from antlr4 import *
+from gen.ExprLexer import ExprLexer
+from gen.ExprParser import ExprParser
+from gen.ExprVisitor import ExprVisitor
+import re
+
 
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 1000, depth: int = 4):
+    def __init__(self, p_size: int = 10000, depth: int = 4):
         self.MAX_LEN: int = 4
         self.MAX_LOGIC_LEN: int = 5
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
-        self.GENERATIONS: int = 100
+        self.GENERATIONS: int = 150
         self.MATCH_SIZE: int = 2
         self.MUTATION_RATE: int = 10
 
@@ -272,7 +278,7 @@ class BiggerGP:
         # print("Old", self.to_string(specimen))
         # print("-------")
         mutation_type = random.randint(0, 2)
-        # print(mutation_type)
+        # print("MUTATION:", mutation_type)
         if mutation_type == 0:
             for i in range(len(specimen)):
                 if specimen[i] in self.variables:
@@ -282,6 +288,8 @@ class BiggerGP:
         if mutation_type == 1:
             (index1_start, index1_end) = self.find_index(specimen)
             new_branch = self.grow(random.choice(self.grammar[self.start]))
+            if new_branch == [1900, 2400, 1900]:
+                new_branch = []
             new_specimen = specimen[:index1_start] + new_branch + specimen[index1_end + 1:]
             # print(self.to_string(new_specimen))
             return new_specimen
@@ -387,10 +395,29 @@ class BiggerGP:
 if __name__ == "__main__":
     b = BiggerGP()
     specimen1 = b.generate_random_individual()
-    print(b.to_string(specimen1))
+    #print(b.to_string(specimen1))
     #specimen2 = b.generate_random_individual()
     # specimen3 =  b.generate_random_individual()
     # specimen4 =  b.generate_random_individual()
     # specimen5 =  b.generate_random_individual()
-    # b.crossover(specimen1, specimen2)
-    #b.mutation(specimen1)
+    #b.crossover(specimen1, specimen2)
+    b.mutation(specimen1)
+
+    specimen1 = b.generate_random_individual()
+    specimen2 = b.generate_random_individual()
+    for _ in range(100000):
+        try:
+            specimen2 = b.crossover(specimen1, specimen2)
+            lexer = ExprLexer(InputStream(b.to_string(specimen2)))
+            #mutation = b.to_string(b.mutation(specimen1))
+            #print(mutation)
+            #lexer = ExprLexer(InputStream(mutation))
+            #lexer = ExprLexer(InputStream(b.to_string(specimen1)))
+            stream = CommonTokenStream(lexer)
+            parser = ExprParser(stream)
+            tree = parser.prog()
+            visitor = ExprVisitor()
+            output, _ = visitor.visit(tree)
+            # print("Output: ", output)
+        except Exception as e:
+            pass
