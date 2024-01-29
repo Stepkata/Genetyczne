@@ -210,6 +210,7 @@ def check_for_variables(program):
 
 def benchmark1(program):
     try:
+        #print(program)
         lexer = ExprLexer(InputStream(program))
         stream = CommonTokenStream(lexer)
         parser = ExprParser(stream)

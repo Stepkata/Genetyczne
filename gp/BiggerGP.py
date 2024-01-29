@@ -13,7 +13,7 @@ import re
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 10000, depth: int = 4):
+    def __init__(self, p_size: int = 1000, depth: int = 4):
         self.MAX_LEN: int = 4
         self.MAX_LOGIC_LEN: int = 5
         self.POP_SIZE: int = p_size
@@ -79,6 +79,10 @@ class BiggerGP:
         self.variables_buffer: list = []
         self.stats: list = []
 
+        self.variables_start = 10000
+        self.int_literals_start = 10000000
+        self.max_int = 10000
+
     """grows the buffer. An iteration of self.grow"""
 
     def traverse(self, buffer) -> list:
@@ -117,9 +121,11 @@ class BiggerGP:
             else:
                 new_rule = random.choice(variables_pom)
         if rule == 2:
-            index = len(self.variables) + 10000
-            self.variables[index] = random.choice(
-                string.ascii_letters)  # if we are creating variable, add its name to register
+            index = len(self.variables) + self.variables_start
+            if index > self.int_literals_start - self.variables_start:
+                index = random.randint(self.variables_start, self.int_literals_start - 1)
+            else:  # if we are creating variable, add its name to register
+                self.variables[index] = random.choice(string.ascii_letters)
             self.variables_buffer.append(index)
             new_rule[new_rule.index(2100)] = index
         if rule == 9:
@@ -167,15 +173,16 @@ class BiggerGP:
 
         for i in range(len(buffer)):  # choose some ints
             if buffer[i] == 2200:
-                index = len(self.int_literals) + 100000
-                self.int_literals[index] = random.randint(0, 1000)  # can be changed
+                index = len(self.int_literals) + self.int_literals_start
+                self.int_literals[index] = random.randint(0, self.max_int)  # can be changed
                 buffer[i] = index
 
-        self.to_string(buffer)
         return buffer
 
-    def generate_random_individual(self) -> list:
-        self.variables_buffer = []
+    def generate_random_individual(self, variables=None) -> list:
+        if variables is None:
+            variables = []
+        self.variables_buffer = variables
         buffer = []
         for _ in range(random.randint(1, self.MAX_LEN)):
             buffer.append(self.start)
@@ -225,18 +232,21 @@ class BiggerGP:
         print("start: ", parent1[index1_start], "end: ", parent1[index1_end])
         print("----------------------------------")
         print("child", self.to_string(new_specimen))'''''
+        if new_specimen[-2] != 2400:
+            raise Exception("crossover!")
         return new_specimen
 
     """Finds the beginning and end of the statement (branch) that will be swapped"""
 
     def clean_individual(self, buffer):
         result = copy.deepcopy(buffer)
-        for i in range(len(buffer)-2):
-            if buffer[i] == 1900 and buffer[i+1] == 1900:
-                result = result[:i] + result[i+1:]
-            elif buffer[i] == 1900 and buffer[i+1] != 2400:
+        for i in range(len(buffer) - 2):
+            if buffer[i] == 1900 and buffer[i + 1] == 1900:
+                result = result[:i] + result[i + 1:]
+            elif buffer[i] == 1900 and buffer[i + 1] != 2400:
                 result = result[:i] + [2400] + result[i:]
         return result
+
     def find_index(self, specimen: []) -> tuple:
         indexes = [index for index, item in enumerate(specimen) if item in self.node_starts]
         for i in range(len(specimen) - 2):
@@ -278,20 +288,25 @@ class BiggerGP:
         # print("Old", self.to_string(specimen))
         # print("-------")
         mutation_type = random.randint(0, 2)
-        # print("MUTATION:", mutation_type)
+        #print("MUTATION:", mutation_type)
         if mutation_type == 0:
             for i in range(len(specimen)):
                 if specimen[i] in self.variables:
                     specimen[i] = random.choice(list(self.variables.keys()))
             # print(self.to_string(specimen))
+            if specimen[-2] != 2400:
+                raise Exception("mutation!")
             return specimen
         if mutation_type == 1:
             (index1_start, index1_end) = self.find_index(specimen)
+            self.variables_buffer = list(filter(lambda word: 10000 <= word < 100000, specimen[:index1_start]))
             new_branch = self.grow(random.choice(self.grammar[self.start]))
             if new_branch == [1900, 2400, 1900]:
-                new_branch = []
+                return specimen
             new_specimen = specimen[:index1_start] + new_branch + specimen[index1_end + 1:]
             # print(self.to_string(new_specimen))
+            if new_specimen[-2] != 2400:
+                raise Exception("mutation!")
             return new_specimen
         if mutation_type == 2:
             index1 = len(specimen) - 1
@@ -311,12 +326,14 @@ class BiggerGP:
                 new_logic = self.grow([6])
             new_specimen = specimen[:index1 + 1] + new_logic + specimen[index2:]
             # print(self.to_string(new_specimen))
+            if new_specimen[-2] != 2400:
+                raise Exception("mutation!")
             return new_specimen
 
     """Finds the most fit individual """
 
     def tournament(self, tournament_size: int):
-        best = random.randint(0, len(self.population)-1)
+        best = random.randint(0, len(self.population) - 1)
         best_fit = -1.0e34
         for i in range(tournament_size):
             competitor = random.randint(0, len(self.population) - 1)
@@ -329,7 +346,7 @@ class BiggerGP:
     """Chooses a random individual to be replaced from a group of tournament_size individuals"""
 
     def negative_tournament(self, tournament_size: int):
-        worst = random.randint(0, len(self.population)-1)
+        worst = random.randint(0, len(self.population) - 1)
         worst_fit = -1.0e34
         for i in range(tournament_size):
             competitor = random.randint(0, len(self.population) - 1)
@@ -355,6 +372,7 @@ class BiggerGP:
         return ' '.join(pom)
 
     """Gather current generation stats"""
+
     def get_stats(self, solved, generation):
         best_indiv = self.get_best_individual()
         best_fit = self.get_best_fitness()
@@ -394,25 +412,20 @@ class BiggerGP:
 
 if __name__ == "__main__":
     b = BiggerGP()
-    specimen1 = b.generate_random_individual()
-    #print(b.to_string(specimen1))
-    #specimen2 = b.generate_random_individual()
-    # specimen3 =  b.generate_random_individual()
-    # specimen4 =  b.generate_random_individual()
-    # specimen5 =  b.generate_random_individual()
-    #b.crossover(specimen1, specimen2)
-    b.mutation(specimen1)
 
-    specimen1 = b.generate_random_individual()
-    specimen2 = b.generate_random_individual()
     for _ in range(100000):
         try:
-            specimen2 = b.crossover(specimen1, specimen2)
-            lexer = ExprLexer(InputStream(b.to_string(specimen2)))
-            #mutation = b.to_string(b.mutation(specimen1))
-            #print(mutation)
-            #lexer = ExprLexer(InputStream(mutation))
-            #lexer = ExprLexer(InputStream(b.to_string(specimen1)))
+
+            specimen2 = b.generate_random_individual()
+            specimen1 = b.generate_random_individual()
+            specimen1 = b.mutation(specimen1)
+            indiv = b.crossover(specimen1, specimen2)
+            indiv_string = b.to_string(indiv)
+            print("--------------------")
+            print(indiv_string)
+            print(indiv)
+            print("--------------------")
+            lexer = ExprLexer(InputStream(indiv_string))
             stream = CommonTokenStream(lexer)
             parser = ExprParser(stream)
             tree = parser.prog()
