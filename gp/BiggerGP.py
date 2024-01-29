@@ -70,18 +70,18 @@ class BiggerGP:
             10: [[1800, 700, 9, 800, 900, 1900, 1, 1900, 1000], [1800, 2500, 700, 9, 800, 900, 1900, 1, 1900, 1000]]
             # 'while': ['WHILE LPAREN  condition RPAREN LCURL NEWLINE  expr NEWLINE  RCURL'], ['WHILE NOT LPAREN  condition RPAREN LCURL NEWLINE  expr NEWLINE  RCURL']
         }
+        self.variables_start = 10000
+        self.int_literals_start = 100000
+        self.max_int = 10000
 
         self.node_starts: list = [1700, 2000, 1800]
         self.start: int = 1  # expr
         self.node_end: int = 2400  # dot
-        self.variables: dict = {}
+        self.variables: dict = dict(
+            zip([i + self.variables_start for i in range(0, len(string.ascii_letters) - 1)], string.ascii_letters))
         self.int_literals: dict = {}
         self.variables_buffer: list = []
         self.stats: list = []
-
-        self.variables_start = 10000
-        self.int_literals_start = 10000000
-        self.max_int = 10000
 
     """grows the buffer. An iteration of self.grow"""
 
@@ -121,11 +121,7 @@ class BiggerGP:
             else:
                 new_rule = random.choice(variables_pom)
         if rule == 2:
-            index = len(self.variables) + self.variables_start
-            if index > self.int_literals_start - self.variables_start:
-                index = random.randint(self.variables_start, self.int_literals_start - 1)
-            else:  # if we are creating variable, add its name to register
-                self.variables[index] = random.choice(string.ascii_letters)
+            index = random.choice([i + self.variables_start for i in range(0, len(string.ascii_letters) - 1)])
             self.variables_buffer.append(index)
             new_rule[new_rule.index(2100)] = index
         if rule == 9:
@@ -288,7 +284,7 @@ class BiggerGP:
         # print("Old", self.to_string(specimen))
         # print("-------")
         mutation_type = random.randint(0, 2)
-        #print("MUTATION:", mutation_type)
+        # print("MUTATION:", mutation_type)
         if mutation_type == 0:
             for i in range(len(specimen)):
                 if specimen[i] in self.variables:
