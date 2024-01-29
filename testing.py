@@ -307,9 +307,9 @@ if __name__ == '__main__':
     #                         "Poza liczbą 789 może też zwrócić inne liczby.", "1.1.E")
     # test(fitness_function_6, "Program powinien wygenerować na wyjściu liczbę jako jedyną liczbę 1. "
     #                         "Poza liczbą 1 NIE powinien nic więcej wygenerować.", "1.1.F")
-    # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-    #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
-    #     "1.2.A")
+    test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+                             "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
+         "1.2.A")
     # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]",
     #     "1.2.B")
@@ -325,5 +325,5 @@ if __name__ == '__main__':
     # test(fitness_function_9, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
     #                         " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
     #     "1.3.A")
-    test(benchmark1, "Given an integer and a float, print their sum", "B.1")
+    #test(benchmark1, "Given an integer and a float, print their sum", "B.1")
     pass
