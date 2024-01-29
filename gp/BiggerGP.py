@@ -105,8 +105,8 @@ class BiggerGP:
     """Checks for special cases when creating rules:
         - if the new_rule demands the use of a variable, it checks if there are any declared by the individual. 
             if not the variable is swapped for an integer
-        - if the rule will create a variable, we add it to the declared variables (self.variables and variables_buffer)
-            and immediately place it in the new_rule
+        - if the rule will create a variable, we choose the name from all possible (self.variables), 
+            add it to the declared variables (self.variables_buffer) and immediately place it in the new_rule
         - if the rule is a condition we check the neighbourhood to count how long is the logical statement already.
             If it is longer than self.MAX_LOGIC_LEN, we do not allow it to make more conditions in new_rule"""
 
@@ -281,50 +281,59 @@ class BiggerGP:
         2. The first condition or print statement is changed"""
 
     def mutation(self, specimen) -> list:
-        # print("Old", self.to_string(specimen))
-        # print("-------")
-        mutation_type = random.randint(0, 2)
-        # print("MUTATION:", mutation_type)
-        if mutation_type == 0:
+        #print("OLD------")
+        #print(self.to_string(specimen))
+        #print("-------")
+        mutation_type = random.randint(0, 3)
+
+        if mutation_type == 0: #mutate ints into different ints
             for i in range(len(specimen)):
-                if specimen[i] in self.variables:
-                    specimen[i] = random.choice(list(self.variables.keys()))
-            # print(self.to_string(specimen))
-            if specimen[-2] != 2400:
-                raise Exception("mutation!")
+                if specimen[i] > self.int_literals_start:
+                    index = len(self.int_literals) + self.int_literals_start
+                    self.int_literals[index] = random.randint(0, self.max_int)  # can be changed
+                    specimen[i] = index
             return specimen
-        if mutation_type == 1:
+        if mutation_type == 1: #mutate branch
             (index1_start, index1_end) = self.find_index(specimen)
-            self.variables_buffer = list(filter(lambda word: 10000 <= word < 100000, specimen[:index1_start]))
+            self.variables_buffer = (
+                list(filter(lambda word: self.variables_start <= word < self.int_literals_start, specimen[:index1_start])))
             new_branch = self.grow(random.choice(self.grammar[self.start]))
             if new_branch == [1900, 2400, 1900]:
                 return specimen
-            new_specimen = specimen[:index1_start] + new_branch + specimen[index1_end + 1:]
-            # print(self.to_string(new_specimen))
-            if new_specimen[-2] != 2400:
-                raise Exception("mutation!")
+            new_specimen = specimen[:index1_start] + new_branch + specimen[index1_end+1:]
             return new_specimen
-        if mutation_type == 2:
-            index1 = len(specimen) - 1
-            index2 = len(specimen) - 1
-            for i in range(len(specimen)):
-                if specimen[i] == 700:
-                    index1 = i
-                if specimen[i] == 800:
-                    index2 = i
-                    break
+        if mutation_type == 2: #mutate prints and conditionals
+            index1, index2 = self.find_brackets(specimen)
             if index1 == index2:
-                # print(self.to_string(specimen))
                 return specimen
             if any([1100 <= x <= 1600 for x in specimen[index1:index2]]):
                 new_logic = self.grow([9])
             else:
                 new_logic = self.grow([6])
             new_specimen = specimen[:index1 + 1] + new_logic + specimen[index2:]
-            # print(self.to_string(new_specimen))
-            if new_specimen[-2] != 2400:
-                raise Exception("mutation!")
             return new_specimen
+        if mutation_type == 3: #mutate ints into variables
+            index1, index2 = self.find_brackets(specimen)
+            self.variables_buffer = (
+                list(filter(lambda word: self.variables_start <= word < self.int_literals_start,
+                            specimen[:index1])))
+            if len(self.variables_buffer) == 0:
+                return specimen
+            for i in range(index1, index2):
+                if specimen[i] >= self.int_literals_start:
+                    specimen[i] = random.choice(self.variables_buffer)
+            return specimen
+
+    def find_brackets(self, specimen: list) -> tuple:
+        index1 = len(specimen) - 1
+        index2 = len(specimen) - 1
+        for i in range(len(specimen)):
+            if specimen[i] == 700:
+                index1 = i
+            if specimen[i] == 800:
+                index2 = i
+                break
+        return index1, index2
 
     """Finds the most fit individual """
 
@@ -412,10 +421,11 @@ if __name__ == "__main__":
     for _ in range(100000):
         try:
 
-            specimen2 = b.generate_random_individual()
+            #specimen2 = b.generate_random_individual()
             specimen1 = b.generate_random_individual()
             specimen1 = b.mutation(specimen1)
-            indiv = b.crossover(specimen1, specimen2)
+            indiv = specimen1
+            #indiv = b.crossover(specimen1, specimen2)
             indiv_string = b.to_string(indiv)
             print("--------------------")
             print(indiv_string)
