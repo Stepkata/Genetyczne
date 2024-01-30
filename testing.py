@@ -155,7 +155,7 @@ def fitness_function_7(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         num_readings = program.count("input()")
-        for _ in range(2):
+        for _ in range(4):
             visitor = ExprVisitor(20, -9, 9)
             output, program_input = visitor.visit(tree)
             # print("Output: ", output)
