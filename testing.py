@@ -154,9 +154,9 @@ def fitness_function_7(program):
         stream = CommonTokenStream(lexer)
         parser = ExprParser(stream)
         tree = parser.prog()
-        visitor = ExprVisitor(20, -9, 9)
         num_readings = program.count("input()")
-        for _ in range(3):
+        for _ in range(2):
+            visitor = ExprVisitor(20, -9, 9)
             output, program_input = visitor.visit(tree)
             # print("Output: ", output)
             if output[0] == program_input[0] + program_input[1] and num_readings == 2 and len(output) == 1:
@@ -164,13 +164,13 @@ def fitness_function_7(program):
                 print("Outputs: ", output )
                 fitness += 0
             elif len(output) == 1:
-                fitness += value
+                fitness += (value - len(program)/10000)
             else:
-                fitness += 2*value
+                fitness += 2*(value - len(program)/10000)
         return fitness
     except Exception as e:
         # print(e)
-        return 8*value
+        return 8*(value - len(program)/10000)
 
 
 def fitness_function_8(program):
@@ -360,11 +360,11 @@ if __name__ == '__main__':
     #                         "Poza liczbą 789 może też zwrócić inne liczby.", "1.1.E")
     # test(fitness_function_6, "Program powinien wygenerować na wyjściu liczbę jako jedyną liczbę 1. "
     #                         "Poza liczbą 1 NIE powinien nic więcej wygenerować.", "1.1.F")
-    # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-    #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
-    #     "1.2.A")
     test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-                            "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]", "1.2.B")
+                            "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
+        "1.2.A")
+    #test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                        "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]", "1.2.B")
     # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
     #     "1.2.C")
@@ -380,4 +380,7 @@ if __name__ == '__main__':
     # test(benchmark1, "Given an integer and a float, print their sum", "B.1")
     # test(benchmark3, "Given 4 integers, print smallest of them", "28/ C.3")
     # test(benchmark2, "Given the integer n, return the sum of squaring each integer in range[1, n]", "B.3_17")
-    pass
+
+    #program = ("E = input() . \n" + "M = input() . \n" + "while ( M < E / E && M + M - M != E / M && M != M && M != E ) { \n "
+    #           + "print ( 995 ) . \n" + "\n") + "} . \n" + "print ( M + E ) . \n"
+    #print(fitness_function_7(program))

@@ -13,7 +13,7 @@ import re
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 1000, depth: int = 4):
+    def __init__(self, p_size: int = 5000, depth: int = 4):
         self.MAX_LEN: int = 6
         self.MAX_LOGIC_LEN: int = 3
         self.POP_SIZE: int = p_size
@@ -246,9 +246,9 @@ class BiggerGP:
                     if len(usable) > 0:
                         result[i] = random.choice(usable)
                     else:
-                        result[i] = random.choice(self.int_literals)
+                        result[i] = random.choice(list(self.int_literals.keys()))
                 else:
-                    result[i] = random.choice(self.int_literals)
+                    result[i] = random.choice(list(self.int_literals.keys()))
         return result
 
     def find_index(self, specimen: []) -> tuple:
