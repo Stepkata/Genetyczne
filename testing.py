@@ -132,21 +132,22 @@ def fitness_function_6(program):
 
 def fitness_function_7(program):
     fitness = 0
-    value = -10_000
+    value = -1000
+    checks = 1
     inputs_count = program.count("input()")
     if inputs_count == 2:
-        print_counts = program.count("print")
-        if print_counts >= 1:
-            value = -300
-        else:
-         value = -1000
-    elif inputs_count == 1:
-        value = -3000
+         value += 100
+         checks += 1
     else:
-        return -10_000
-    matches = re.findall(r"print\([^+]+\+[^\)]+\)", program)
-    if len(matches) == 1:
-        value = -100
+        return -1000
+    split_program = program.split(".")
+    if "input()" in split_program[0] and "input()" in split_program[1]:
+        value += 500
+        checks += 1
+    if any(["print" in x and "+" in x for x in split_program[1:]]):
+        value += 200
+        checks += 1
+    value = value/checks
 
     try:
         lexer = ExprLexer(InputStream(program))
@@ -156,20 +157,20 @@ def fitness_function_7(program):
         visitor = ExprVisitor(20, -9, 9)
         num_readings = program.count("input()")
         for _ in range(3):
-            output, input = visitor.visit(tree)
+            output, program_input = visitor.visit(tree)
             # print("Output: ", output)
-            if output[0] == input[0] + input[1] and num_readings == 2 and len(output) == 1:
-                print("inputs:", input)
+            if output[0] == program_input[0] + program_input[1] and num_readings == 2 and len(output) == 1:
+                print("inputs:", program_input)
                 print("Outputs: ", output )
                 fitness += 0
             elif len(output) == 1:
-                fitness += max(-10 * (num_readings + abs(abs(output[0]) - (input[0] + input[1])) + 1), value)
-            else:
                 fitness += value
+            else:
+                fitness += 2*value
         return fitness
     except Exception as e:
         # print(e)
-        return value
+        return 8*value
 
 
 def fitness_function_8(program):

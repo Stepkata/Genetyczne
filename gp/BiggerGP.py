@@ -14,8 +14,8 @@ class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
     def __init__(self, p_size: int = 1000, depth: int = 4):
-        self.MAX_LEN: int = 4
-        self.MAX_LOGIC_LEN: int = 5
+        self.MAX_LEN: int = 6
+        self.MAX_LOGIC_LEN: int = 3
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
         self.GENERATIONS: int = 150
@@ -218,7 +218,6 @@ class BiggerGP:
     """Swaps branches between parent1 and parent1"""
 
     def crossover(self, parent1: [], parent2: []) -> list:
-        new_specimen = []
         (index1_start, index1_end) = self.find_index(parent1)
         (index2_start, index2_end) = self.find_index(parent2)
         new_specimen = parent1[:index1_start] + parent2[index2_start:index2_end] + parent1[index1_end:]
@@ -228,19 +227,28 @@ class BiggerGP:
         print("start: ", parent1[index1_start], "end: ", parent1[index1_end])
         print("----------------------------------")
         print("child", self.to_string(new_specimen))'''''
-        if new_specimen[-2] != 2400:
-            raise Exception("crossover!")
-        return new_specimen
+        return self.clean_individual(new_specimen)
 
     """Finds the beginning and end of the statement (branch) that will be swapped"""
 
     def clean_individual(self, buffer):
         result = copy.deepcopy(buffer)
+        indiv_vars = {}
+        declarations = []
         for i in range(len(buffer) - 2):
-            if buffer[i] == 1900 and buffer[i + 1] == 1900:
-                result = result[:i] + result[i + 1:]
-            elif buffer[i] == 1900 and buffer[i + 1] != 2400:
-                result = result[:i] + [2400] + result[i:]
+            if buffer[i] >= self.variables_start and buffer[i + 1] == 600:
+                indiv_vars[buffer[i]] = i
+                declarations.append(i)
+        for i in range(len(buffer)-1):
+            if self.variables_start <= buffer[i] < self.int_literals_start and i not in declarations:
+                if len(indiv_vars) > 0:
+                    usable = [x for x in indiv_vars.keys() if indiv_vars[x] < i]
+                    if len(usable) > 0:
+                        result[i] = random.choice(usable)
+                    else:
+                        result[i] = random.choice(self.int_literals)
+                else:
+                    result[i] = random.choice(self.int_literals)
         return result
 
     def find_index(self, specimen: []) -> tuple:
@@ -421,11 +429,11 @@ if __name__ == "__main__":
     for _ in range(100000):
         try:
 
-            #specimen2 = b.generate_random_individual()
+            specimen2 = b.generate_random_individual()
             specimen1 = b.generate_random_individual()
             specimen1 = b.mutation(specimen1)
-            indiv = specimen1
-            #indiv = b.crossover(specimen1, specimen2)
+            #indiv = specimen1
+            indiv = b.crossover(specimen1, specimen2)
             indiv_string = b.to_string(indiv)
             print("--------------------")
             print(indiv_string)
