@@ -1,3 +1,5 @@
+import time
+
 from antlr4 import *
 from gen.ExprLexer import ExprLexer
 from gen.ExprParser import ExprParser
@@ -129,25 +131,45 @@ def fitness_function_6(program):
 
 
 def fitness_function_7(program):
+    fitness = 0
+    value = -10_000
+    inputs_count = program.count("input()")
+    if inputs_count == 2:
+        print_counts = program.count("print")
+        if print_counts >= 1:
+            value = -300
+        else:
+         value = -1000
+    elif inputs_count == 1:
+        value = -3000
+    else:
+        return -10_000
+    matches = re.findall(r"print\([^+]+\+[^\)]+\)", program)
+    if len(matches) == 1:
+        value = -100
+
     try:
         lexer = ExprLexer(InputStream(program))
         stream = CommonTokenStream(lexer)
         parser = ExprParser(stream)
         tree = parser.prog()
-        visitor = ExprVisitor()
-        output, input = visitor.visit(tree)
+        visitor = ExprVisitor(20, -9, 9)
         num_readings = program.count("input()")
-
-        # print("Output: ", output)
-        if output[0] == input[0] + input[1] and num_readings == 2 and len(output) == 1:
-            return 0
-        elif len(output) == 1:
-            return max(-10 * (num_readings + abs(abs(output[0]) - (input[0] + input[1])) + 1), -100)
-        else:
-            return -1000
+        for _ in range(3):
+            output, input = visitor.visit(tree)
+            # print("Output: ", output)
+            if output[0] == input[0] + input[1] and num_readings == 2 and len(output) == 1:
+                print("inputs:", input)
+                print("Outputs: ", output )
+                fitness += 0
+            elif len(output) == 1:
+                fitness += max(-10 * (num_readings + abs(abs(output[0]) - (input[0] + input[1])) + 1), value)
+            else:
+                fitness += value
+        return fitness
     except Exception as e:
         # print(e)
-        return -1000
+        return value
 
 
 def fitness_function_8(program):
@@ -236,6 +258,36 @@ def benchmark1(program):
         # print(e)
         return -1000
 
+def benchmark2(program):
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        visitor = ExprVisitor()
+        fitness = 0
+        if program.count("while") == 0:
+            return -10_000
+        for _ in range(3):
+            output, inputs = visitor.visit(tree)
+            num_reading = program.count("input()")
+            proper_value = 0
+            for i in range(1, inputs[0] + 1):
+                proper_value += i**2
+
+            if num_reading == 1 and proper_value in output:
+                print("Inputs: ", inputs)
+                print("Outputs:", output)
+                print("Proper val: ", proper_value)
+                fitness += 0
+            else:
+                fitness += (-1 * abs(output[0] - proper_value) - 100)
+        return fitness
+    except Exception as e:
+        # print(e)
+        # print(program)
+        return -10_000
+
 
 def benchmark3(program):
     try:
@@ -310,9 +362,8 @@ if __name__ == '__main__':
     # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
     #     "1.2.A")
-    # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-    #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]",
-    #     "1.2.B")
+    test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+                            "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]", "1.2.B")
     # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
     #     "1.2.C")
@@ -325,5 +376,7 @@ if __name__ == '__main__':
     # test(fitness_function_9, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
     #                         " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
     #     "1.3.A")
-    test(benchmark1, "Given an integer and a float, print their sum", "B.1")
+    # test(benchmark1, "Given an integer and a float, print their sum", "B.1")
+    # test(benchmark3, "Given 4 integers, print smallest of them", "28/ C.3")
+    # test(benchmark2, "Given the integer n, return the sum of squaring each integer in range[1, n]", "B.3_17")
     pass

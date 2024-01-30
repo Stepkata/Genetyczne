@@ -20,7 +20,7 @@ class Variable:
 # This class defines a complete generic visitor for a parse tree produced by ExprParser.
 class ExprVisitor(ParseTreeVisitor):
 
-    def __init__(self, max_loop_iter:int = 10, min_range: int = 0, max_range: int = 100):
+    def __init__(self, max_loop_iter:int = 10, min_range: int = 5, max_range: int = 30):
         self.variables: List[Variable] = []
         self.outputs: List[int] = []
         self.inputs: List[int] = []
@@ -127,7 +127,7 @@ class ExprVisitor(ParseTreeVisitor):
         name = ctx.IDENTIFIER().getText()
         value = 0
         if ctx.literals():
-            values, outputs  = self.visitLiterals(ctx.literals(), [], [])
+            values, outputs = self.visitLiterals(ctx.literals(), [], [])
             value = self.get_value(values, outputs)
         else:
             value = random.randint(self.min_range, self.max_range)
@@ -252,9 +252,10 @@ class ExprVisitor(ParseTreeVisitor):
             was_variable_found, variable = self.findVariable(ctx.IDENTIFIER().getText())
             if was_variable_found:
                 values.append(variable.value)
-                return values,outputs
+                return values, outputs
             else:
-                return 0
+                values.append(0)
+                return values,outputs
         elif ctx.INTLITERAL():
             values.append(int(ctx.INTLITERAL().getText()))
             return values, outputs

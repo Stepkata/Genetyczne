@@ -13,14 +13,14 @@ import re
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 1000, depth: int = 4):
+    def __init__(self, p_size: int = 400, depth: int = 1):
         self.MAX_LEN: int = 4
-        self.MAX_LOGIC_LEN: int = 5
+        self.MAX_LOGIC_LEN: int = 1
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
-        self.GENERATIONS: int = 150
+        self.GENERATIONS: int = 1000
         self.MATCH_SIZE: int = 2
-        self.MUTATION_RATE: int = 10
+        self.MUTATION_RATE: int = 30
 
         self.pop_fitness: list = []
         self.population: list = []
@@ -228,8 +228,8 @@ class BiggerGP:
         print("start: ", parent1[index1_start], "end: ", parent1[index1_end])
         print("----------------------------------")
         print("child", self.to_string(new_specimen))'''''
-        if new_specimen[-2] != 2400:
-            raise Exception("crossover!")
+        # if new_specimen[-2] != 2400:
+        #     raise Exception("crossover!")
         return new_specimen
 
     """Finds the beginning and end of the statement (branch) that will be swapped"""
@@ -290,8 +290,8 @@ class BiggerGP:
                 if specimen[i] in self.variables:
                     specimen[i] = random.choice(list(self.variables.keys()))
             # print(self.to_string(specimen))
-            if specimen[-2] != 2400:
-                raise Exception("mutation!")
+            # if specimen[-2] != 2400:
+            #     raise Exception("mutation!")
             return specimen
         if mutation_type == 1:
             (index1_start, index1_end) = self.find_index(specimen)
@@ -301,8 +301,8 @@ class BiggerGP:
                 return specimen
             new_specimen = specimen[:index1_start] + new_branch + specimen[index1_end + 1:]
             # print(self.to_string(new_specimen))
-            if new_specimen[-2] != 2400:
-                raise Exception("mutation!")
+            # if new_specimen[-2] != 2400:
+            #     raise Exception("mutation!")
             return new_specimen
         if mutation_type == 2:
             index1 = len(specimen) - 1
@@ -322,8 +322,8 @@ class BiggerGP:
                 new_logic = self.grow([6])
             new_specimen = specimen[:index1 + 1] + new_logic + specimen[index2:]
             # print(self.to_string(new_specimen))
-            if new_specimen[-2] != 2400:
-                raise Exception("mutation!")
+            # if new_specimen[-2] != 2400:
+            #     raise Exception("mutation!")
             return new_specimen
 
     """Finds the most fit individual """

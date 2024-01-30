@@ -6,9 +6,7 @@ from gen.ExprVisitor import ExprVisitor
 
 def main(filename):
     input_stream = FileStream(filename)
-    lexer = ExprLexer(InputStream("while ( 10 == 5) {"
-                                  "\n."
-                                  "} ."))
+    lexer = ExprLexer(InputStream("a = a. \n print(a)."))
     stream = CommonTokenStream(lexer)
     parser = ExprParser(stream)
     tree = parser.prog()
