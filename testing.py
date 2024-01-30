@@ -156,7 +156,7 @@ def fitness_function_7(program):
         tree = parser.prog()
         num_readings = program.count("input()")
         for _ in range(4):
-            visitor = ExprVisitor(20, -9, 9)
+            visitor = ExprVisitor(20, -9999, 9999)
             output, program_input = visitor.visit(tree)
             # print("Output: ", output)
             if output[0] == program_input[0] + program_input[1] and num_readings == 2 and len(output) == 1:
@@ -363,11 +363,11 @@ if __name__ == '__main__':
     #test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                        "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
     #    "1.2.A")
+    #test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                        "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]", "1.2.B")
     test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-                            "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]", "1.2.B")
-    # test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-    #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
-    #     "1.2.C")
+                             "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9999,9999]",
+         "1.2.C")
     # test(fitness_function_8, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                         "(jedynie) ich różnicę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
     #     "1.2.D")
