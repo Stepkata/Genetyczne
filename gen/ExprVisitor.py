@@ -14,7 +14,7 @@ else:
 @dataclass
 class Variable:
     name: str
-    value: int
+    value: Union[int, float]
 
 
 # This class defines a complete generic visitor for a parse tree produced by ExprParser.
@@ -22,8 +22,8 @@ class ExprVisitor(ParseTreeVisitor):
 
     def __init__(self, max_loop_iter:int = 10, min_range: int = 5, max_range: int = 30):
         self.variables: List[Variable] = []
-        self.outputs: List[int] = []
-        self.inputs: List[int] = []
+        self.outputs: List[Union[int, float]] = []
+        self.inputs: List[Union[int, float]] = []
         self.max_loop_iter = max_loop_iter
         self.counter = 0
         self.min_range = min_range
@@ -130,7 +130,7 @@ class ExprVisitor(ParseTreeVisitor):
             values, outputs = self.visitLiterals(ctx.literals(), [], [])
             value = self.get_value(values, outputs)
         else:
-            value = random.randint(self.min_range, self.max_range)
+            value = round(random.uniform(self.min_range, self.max_range), 2)
             self.inputs.append(value)
 
         names = [var.name for var in self.variables]
@@ -193,7 +193,7 @@ class ExprVisitor(ParseTreeVisitor):
                     break
             break
         value = values[0]
-        self.outputs.append(value)
+        self.outputs.append(round(value, 2))
 
     def visitOperators(self, ctx: ExprParser.OperatorsContext):
         """
