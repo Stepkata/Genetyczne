@@ -267,17 +267,38 @@ def fitness_function_10(program):
         value += 100
         checks += 1
     else:
-        return -1000
+        return -10000
+    while_counts = program.count("while")
+    if_counts = program.count("if")
+    print_counts = program.count("print")
+    if print_counts != 1:
+        return -10000
+    if while_counts != 0:
+        return -10000
+    if if_counts != 1:
+        return -10000
     split_program = program.split(".")
     if "input()" in split_program[0] and "input()" in split_program[1]:
         value += 500
         checks += 1
-    if any(["if" in x and ("<" in x or ">" in x) for x in split_program[1:]]):
-        value += 100
-        checks += 1
-    if any(["print" in x for x in split_program[1:]]):
-        value += 100
-        checks += 1
+    if any(["if" in x and "print" in x and (">" in x) for x in split_program]):
+        left, right = program.split(">")
+        if left[-2] != right[1]:
+            value += 100
+            checks += 1
+    if any(["if" in x and "print" in x and ("<" in x) for x in split_program]):
+        left, right = program.split("<")
+        if left[-2] != right[1]:
+            value += 100
+            checks += 1
+
+    pattern = r'\bif\s*\(\s*([a-zA-Z]+)\s*(<|>)\s*([a-zA-Z]+)\s*\)\s*{[^}]*\bprint\s*\(\s*([a-zA-Z]+)\s*\)'
+    match = re.search(pattern, program)
+    if match is not None:
+      value += 100
+      checks += 1
+
+
     value = value / checks
 
     try:
@@ -286,14 +307,19 @@ def fitness_function_10(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         num_readings = program.count("input()")
-        for _ in range(8):
-            visitor = ExprVisitor(20, 0, 9)
+        visitor = ExprVisitor(20, -9999, 9999)
+        for _ in range(10):
             output, program_input = visitor.visit(tree)
-            # print("Output: ", output)
+            print("inputs:", program_input)
+            print("Outputs: ", output)
             if output[0] == max(program_input[0], program_input[1]) and num_readings == 2 and len(output) == 1:
-                print("inputs:", program_input)
-                print("Outputs: ", output)
-                fitness += 0
+                pattern = r'\bif\s*\(\s*([a-zA-Z]+)\s*(<|>)\s*([a-zA-Z]+)\s*\)\s*{[^}]*\bprint\s*\(\s*([a-zA-Z]+)\s*\)'
+                if re.search(pattern, program) is None:
+                    fitness += (value - len(program) / 10000)
+                else:
+                    print("inputs:", program_input)
+                    print("Outputs: ", output)
+                    return 0
             elif len(output) == 1:
                 fitness += (value - len(program) / 10000)
             else:
@@ -474,10 +500,9 @@ if __name__ == '__main__':
     #test(fitness_function_9, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                         "(jedynie) ich iloczyn. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
     #     "1.2.E")
-    #test(fitness_function_10, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
-    #                         " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
-    #     "1.3.A")
-    test(benchmark1, "Given an integer and a float, print their sum", "B.1")
+    test(fitness_function_10, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
+                            " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999, 9999]", "1.3.B")
+    # test(benchmark1, "Given an integer and a float, print their sum", "B.1")
     # test(benchmark3, "Given 4 integers, print smallest of them", "28/ C.3")
     # test(benchmark2, "Given the integer n, return the sum of squaring each integer in range[1, n]", "B.3_17")
     pass
