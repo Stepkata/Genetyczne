@@ -174,48 +174,134 @@ def fitness_function_7(program):
 
 
 def fitness_function_8(program):
+    fitness = 0
+    value = -1000
+    checks = 1
+    inputs_count = program.count("input()")
+    if inputs_count == 2:
+        value += 100
+        checks += 1
+    else:
+        return -1000
+    split_program = program.split(".")
+    if "input()" in split_program[0] and "input()" in split_program[1]:
+        value += 500
+        checks += 1
+    if any(["print" in x and "-" in x for x in split_program[1:]]):
+        value += 200
+        checks += 1
+    value = value / checks
+
     try:
         lexer = ExprLexer(InputStream(program))
         stream = CommonTokenStream(lexer)
         parser = ExprParser(stream)
         tree = parser.prog()
-        visitor = ExprVisitor()
-        output, input = visitor.visit(tree)
         num_readings = program.count("input()")
-
-        # print("Output: ", output)
-        if output[0] == input[0] - input[1] and num_readings == 2 and len(output) == 1:
-            return 0
-        elif len(output) == 1:
-            return max(-10 * (num_readings + abs(abs(output[0]) - (input[0] - input[1])) + 1), -100)
-        else:
-            return -1000
+        for _ in range(4):
+            visitor = ExprVisitor(20, -9999, 9999)
+            output, program_input = visitor.visit(tree)
+            # print("Output: ", output)
+            if output[0] == program_input[0] - program_input[1] and num_readings == 2 and len(output) == 1:
+                print("inputs:", program_input)
+                print("Outputs: ", output)
+                fitness += 0
+            elif len(output) == 1:
+                fitness += (value - len(program) / 10000)
+            else:
+                fitness += 2 * (value - len(program) / 10000)
+        return fitness
     except Exception as e:
         # print(e)
-        return -1000
+        return 8 * (value - len(program) / 10000)
 
 
 def fitness_function_9(program):
+    fitness = 0
+    value = -1000
+    checks = 1
+    inputs_count = program.count("input()")
+    if inputs_count == 2:
+        value += 100
+        checks += 1
+    else:
+        return -1000
+    split_program = program.split(".")
+    if "input()" in split_program[0] and "input()" in split_program[1]:
+        value += 500
+        checks += 1
+    if any(["print" in x and "*" in x for x in split_program[1:]]):
+        value += 200
+        checks += 1
+    value = value / checks
+
     try:
         lexer = ExprLexer(InputStream(program))
         stream = CommonTokenStream(lexer)
         parser = ExprParser(stream)
         tree = parser.prog()
-        visitor = ExprVisitor()
-        output, input = visitor.visit(tree)
         num_readings = program.count("input()")
-
-        # print("Output: ", output)
-        if output[0] == max(input[0], input[1]) and num_readings == 2 and len(output) == 1:
-            return 0
-        elif len(output) == 1:
-            return max(-10 * (num_readings * abs(abs(output[0]) - max(input[0], input[1])) + 1), -100)
-        else:
-            return -1000
+        for _ in range(4):
+            visitor = ExprVisitor(20, -9999, 9999)
+            output, program_input = visitor.visit(tree)
+            # print("Output: ", output)
+            if output[0] == program_input[0] * program_input[1] and num_readings == 2 and len(output) == 1:
+                print("inputs:", program_input)
+                print("Outputs: ", output)
+                fitness += 0
+            elif len(output) == 1:
+                fitness += (value - len(program) / 10000)
+            else:
+                fitness += 2 * (value - len(program) / 10000)
+        return fitness
     except Exception as e:
         # print(e)
-        return -1000
+        return 8 * (value - len(program) / 10000)
 
+def fitness_function_10(program):
+    fitness = 0
+    value = -1000
+    checks = 1
+    inputs_count = program.count("input()")
+    if inputs_count == 2:
+        value += 100
+        checks += 1
+    else:
+        return -1000
+    split_program = program.split(".")
+    if "input()" in split_program[0] and "input()" in split_program[1]:
+        value += 500
+        checks += 1
+    if any(["if" in x and ("<" in x or ">" in x) for x in split_program[1:]]):
+        value += 100
+        checks += 1
+    if any(["print" in x for x in split_program[1:]]):
+        value += 100
+        checks += 1
+    value = value / checks
+
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        num_readings = program.count("input()")
+        for _ in range(8):
+            visitor = ExprVisitor(20, 0, 9)
+            output, program_input = visitor.visit(tree)
+            # print("Output: ", output)
+            if output[0] == max(program_input[0], program_input[1]) and num_readings == 2 and len(output) == 1:
+                print("inputs:", program_input)
+                print("Outputs: ", output)
+                fitness += 0
+            elif len(output) == 1:
+                fitness += (value - len(program) / 10000)
+            else:
+                fitness += 2 * (value - len(program) / 10000)
+        return fitness
+    except Exception as e:
+        # print(e)
+        return 8 * (value - len(program) / 10000)
 
 def check_for_variables(program):
     pattern = re.compile(r'print\(([^)]+)\)')
@@ -232,32 +318,46 @@ def check_for_variables(program):
 
 
 def benchmark1(program):
+    fitness = 0
+    value = -1000
+    checks = 1
+    inputs_count = program.count("input()")
+    if inputs_count == 3:
+        value += 100
+        checks += 1
+    else:
+        return -1000
+    split_program = program.split(".")
+    if "input()" in split_program[0] and "input()" in split_program[1] and "input()" in split_program[2]:
+        value += 500
+        checks += 1
+    if any(["print" in x and ("+" in x and "/" in x) for x in split_program[2:]]):
+        value += 200
+        checks += 1
+    value = value / checks
+
     try:
-        #print(program)
         lexer = ExprLexer(InputStream(program))
         stream = CommonTokenStream(lexer)
         parser = ExprParser(stream)
         tree = parser.prog()
-        visitor = ExprVisitor()
-        fitness = 0
-        for _ in range(3):
+        num_readings = program.count("input()")
+        for _ in range(8):
+            visitor = ExprVisitor(20, 0, 9)
             output, program_input = visitor.visit(tree)
-            num_readings = program.count("input()")
-
             # print("Output: ", output)
-            if output[0] == program_input[0] + program_input[1] / program_input[2] and num_readings == 3 and len(
-                    output) == 1:
+            if output[0] == program_input[0] + program_input[1]/program_input[2] and num_readings == 3 and len(output) == 1:
+                print("inputs:", program_input)
+                print("Outputs: ", output)
                 fitness += 0
-            elif len(output) == 1 or num_readings == 3:
-                fitness += max(-10 * (num_readings * abs(
-                    abs(output[0]) - (program_input[0] + program_input[1] / program_input[2])) + 1
-                                      + check_for_variables(program)), -100)
+            elif len(output) == 1:
+                fitness += (value - len(program) / 10000)
             else:
-                fitness += -1000
+                fitness += 2 * (value - len(program) / 10000)
         return fitness
     except Exception as e:
         # print(e)
-        return -1000
+        return 8 * (value - len(program) / 10000)
 
 def benchmark2(program):
     try:
@@ -365,22 +465,19 @@ if __name__ == '__main__':
     #    "1.2.A")
     #test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                        "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9,9]", "1.2.B")
-    test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-                             "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9999,9999]",
-         "1.2.C")
-    # test(fitness_function_8, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
-    #                         "(jedynie) ich różnicę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
-    #     "1.2.D")
-    # test(fitness_function_8, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #test(fitness_function_7, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                         "(jedynie) ich sumę. Na wejściu mogą być tylko całkowite liczby w zakresie [-9999,9999]",
+    #     "1.2.C")
+    #test(fitness_function_8, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
+    #                        "(jedynie) ich różnicę. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
+    #    "1.2.D")
+    #test(fitness_function_9, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                         "(jedynie) ich iloczyn. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
     #     "1.2.E")
-    # test(fitness_function_9, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
+    #test(fitness_function_10, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
     #                         " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
     #     "1.3.A")
-    # test(benchmark1, "Given an integer and a float, print their sum", "B.1")
+    test(benchmark1, "Given an integer and a float, print their sum", "B.1")
     # test(benchmark3, "Given 4 integers, print smallest of them", "28/ C.3")
     # test(benchmark2, "Given the integer n, return the sum of squaring each integer in range[1, n]", "B.3_17")
-
-    #program = ("E = input() . \n" + "M = input() . \n" + "while ( M < E / E && M + M - M != E / M && M != M && M != E ) { \n "
-    #           + "print ( 995 ) . \n" + "\n") + "} . \n" + "print ( M + E ) . \n"
-    #print(fitness_function_7(program))
+    pass
