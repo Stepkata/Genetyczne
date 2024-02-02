@@ -7,18 +7,17 @@ from antlr4 import *
 from gen.ExprLexer import ExprLexer
 from gen.ExprParser import ExprParser
 from gen.ExprVisitor import ExprVisitor
-import re
 
 
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 5000, depth: int = 4):
-        self.MAX_LEN: int = 6
-        self.MAX_LOGIC_LEN: int = 3
+    def __init__(self, p_size: int = 10000, depth: int = 3, length: int = 5):
+        self.MAX_LEN: int = length
+        self.MAX_LOGIC_LEN: int = 2
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
-        self.GENERATIONS: int = 150
+        self.GENERATIONS: int = 50
         self.MATCH_SIZE: int = 2
         self.MUTATION_RATE: int = 10
 
@@ -72,14 +71,12 @@ class BiggerGP:
         }
         self.variables_start = 10000
         self.int_literals_start = 100000
-        self.max_int = 10000
-
+        self.max_int = 100
         self.node_starts: list = [1700, 2000, 1800]
         self.start: int = 1  # expr
         self.node_end: int = 2400  # dot
         self.variables: dict = dict(
             zip([i + self.variables_start for i in range(0, len(string.ascii_letters) - 1)], string.ascii_letters))
-        self.int_literals: dict = {}
         self.variables_buffer: list = []
         self.stats: list = []
 
@@ -169,10 +166,7 @@ class BiggerGP:
 
         for i in range(len(buffer)):  # choose some ints
             if buffer[i] == 2200:
-                index = len(self.int_literals) + self.int_literals_start
-                self.int_literals[index] = random.randint(0, self.max_int)  # can be changed
-                buffer[i] = index
-
+                buffer[i] = random.randint(0, self.max_int) + self.int_literals_start
         return buffer
 
     def generate_random_individual(self, variables=None) -> list:
@@ -246,9 +240,9 @@ class BiggerGP:
                     if len(usable) > 0:
                         result[i] = random.choice(usable)
                     else:
-                        result[i] = random.choice(list(self.int_literals.keys()))
+                        result[i] = random.randint(0, self.max_int) + self.int_literals_start
                 else:
-                    result[i] = random.choice(list(self.int_literals.keys()))
+                    result[i] = random.randint(0, self.max_int) + self.int_literals_start
         return result
 
     def find_index(self, specimen: []) -> tuple:
@@ -297,9 +291,7 @@ class BiggerGP:
         if mutation_type == 0: #mutate ints into different ints
             for i in range(len(specimen)):
                 if specimen[i] > self.int_literals_start:
-                    index = len(self.int_literals) + self.int_literals_start
-                    self.int_literals[index] = random.randint(0, self.max_int)  # can be changed
-                    specimen[i] = index
+                    specimen[i] = random.randint(0, self.max_int) + self.int_literals_start
             return specimen
         if mutation_type == 1: #mutate branch
             (index1_start, index1_end) = self.find_index(specimen)
@@ -376,9 +368,9 @@ class BiggerGP:
         for term in buffer:  # translate terminals
             if term in self.terminal_table.keys():
                 pom.append(self.terminal_table[term])
-            elif term in self.int_literals.keys():
-                pom.append(str(self.int_literals[term]))
-            elif term in self.variables.keys():
+            elif term >= self.int_literals_start:
+                pom.append(str(term - self.int_literals_start))
+            elif term >= self.variables_start:
                 pom.append(self.variables[term])
             else:
                 pom.append(str(term))
@@ -425,8 +417,10 @@ class BiggerGP:
 
 if __name__ == "__main__":
     b = BiggerGP()
+    specimen2 = b.generate_random_individual()
+    print(b.to_string(specimen2))
 
-    for _ in range(100000):
+    """for _ in range(100000):
         try:
 
             specimen2 = b.generate_random_individual()
@@ -447,4 +441,4 @@ if __name__ == "__main__":
             output, _ = visitor.visit(tree)
             # print("Output: ", output)
         except Exception as e:
-            pass
+            pass"""
