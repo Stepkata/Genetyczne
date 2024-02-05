@@ -439,31 +439,36 @@ def benchmark2(program):
 
 def benchmark3(program):
     fitness = 0
-    value = -1500
+    value = -1000
     checks = 1
     inputs_count = program.count("input()")
-    if inputs_count == 1:
-        value += 100
-        checks += 1
-    else:
-        return -1500
-    split_program = program.split(".")
-    variables = [line[0] for line in split_program if "input()" in line]
-    if "input()" in split_program[0] and "= 0" in split_program[1]:
+    ands_count = program.count("&&")
+    less_than_count = program.count("<")
+    print_count = program.count("print")
+    if inputs_count == 4:
         value += 400
         checks += 1
-    if any(["while" in x for x in split_program[2:]]):
-        value += 100
-        checks += 1
-    if any(["print" in x for x in split_program[2:]]):
-        value += 100
-        checks += 1
-    if any(["input()" in x for x in split_program[2:]]):
-        value += 100
-        checks += 1
-    if any([any([v in x for v in variables]) and "=" in x and "+ 1" in x for x in split_program[2:]]):
-        value += 100
-        checks += 1
+    else:
+        return -1000
+    # if ands_count == 3:
+    #     value += 100
+    #     checks += 1
+    # else:
+    #     return -1000
+    # if less_than_count == 3:
+    #     value += 100
+    #     checks += 1
+    # else:
+    #     return -1000
+    #
+    # if print_count < 1:
+    #     return -1000
+    split_program = program.split(".")
+    if "input()" in split_program[0] and "input()" in split_program[1] \
+        and "input()" in split_program[2] and "input()" in split_program[3]:
+            value += 500
+            checks += 1
+
     value = value / checks
 
     try:
@@ -473,11 +478,10 @@ def benchmark3(program):
         tree = parser.prog()
         num_readings = program.count("input()")
         for _ in range(4):
-            visitor = ExprVisitor(20, 1, 9)
+            visitor = ExprVisitor(20, -9, 9)
             output, program_input = visitor.visit(tree)
-
-            if output == [x*x for x in range(1, program_input[0]+1)] and num_readings == 1 and len(
-                    output) == program_input[0]:
+            # print("Output: ", output)
+            if output[0] == min(program_input) and num_readings == 4 and len(output) == 4:
                 print("inputs:", program_input)
                 print("Outputs: ", output)
                 fitness += 0
@@ -558,8 +562,8 @@ if __name__ == '__main__':
     #                          "jedynie) ich średnią arytmetyczną (zaokrągloną do pełnej liczby całkowitej). Na "
     #                          "wejściu mogą być tylko całkowite liczby w zakresie [-99,99]",
     #     "1.4.A")
-    test(fitness_function_7, "Given an integer and a float, print their sum", "B.1")
-    # test(benchmark3, "Given 4 integers, print smallest of them", "28/ C.3")
+    # test(fitness_function_7, "Given an integer and a float, print their sum", "B.1")
+    test(benchmark3, "Given 4 integers, print smallest of them", "28_C.3")
     #test(benchmark2, "Given the integer n, return the sum of squaring each integer in range[1, n]", "B.3_17")
     # test(benchmark3, "Given the integer n, return the vector of squaring each integer in range[1, n]", "B.O_1")
 

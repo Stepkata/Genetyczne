@@ -12,9 +12,9 @@ from gen.ExprVisitor import ExprVisitor
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 2000, depth: int = 3, length: int = 5):
+    def __init__(self, p_size: int = 5000, depth: int = 1, length: int = 6):
         self.MAX_LEN: int = length
-        self.MAX_LOGIC_LEN: int = 1
+        self.MAX_LOGIC_LEN: int = 3
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
         self.GENERATIONS: int = 50
