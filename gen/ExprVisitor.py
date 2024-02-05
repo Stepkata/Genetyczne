@@ -131,8 +131,8 @@ class ExprVisitor(ParseTreeVisitor):
             values, outputs = self.visitLiterals(ctx.literals(), [], [])
             value = self.get_value(values, outputs)
         else:
-            value = random.randint(self.min_range, self.max_range) if self.index % 2 == 0 \
-                    else round(random.uniform(self.min_range, self.max_range), 2)
+            value = random.randint(self.min_range, self.max_range) # if self.index % 2 == 0 \
+                    # else round(random.uniform(self.min_range, self.max_range), 2)
             self.inputs.append(value)
             self.index += 1
 
