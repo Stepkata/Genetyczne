@@ -28,6 +28,7 @@ class ExprVisitor(ParseTreeVisitor):
         self.counter = 0
         self.min_range = min_range
         self.max_range = max_range
+        self.index = 0
 
     def findVariable(self, var_name: str) -> Tuple[bool, Union[Variable, None]]:
         """
@@ -130,8 +131,10 @@ class ExprVisitor(ParseTreeVisitor):
             values, outputs = self.visitLiterals(ctx.literals(), [], [])
             value = self.get_value(values, outputs)
         else:
-            value = random.randint(self.min_range, self.max_range)
+            value = random.randint(self.min_range, self.max_range) if self.index % 2 == 0 \
+                    else round(random.uniform(self.min_range, self.max_range), 2)
             self.inputs.append(value)
+            self.index += 1
 
         names = [var.name for var in self.variables]
         if name in names:
@@ -162,7 +165,7 @@ class ExprVisitor(ParseTreeVisitor):
                         outputs.pop(i)
                         i -= 1
                     elif outputs[i] == "/":
-                        values[i] = values[i] / values[i + 1] if values[i + 1] != 0 else values[i] / 1
+                        values[i] = round(values[i] / values[i + 1], 2) if values[i + 1] != 0 else values[i] / 1
                         values.pop(i + 1)
                         outputs.pop(i)
                         i -= 1
