@@ -339,7 +339,7 @@ def fitness_function_11(program):
         for _ in range(15):
             visitor = ExprVisitor(20, -99, 99)
             output, program_input = visitor.visit(tree)
-            if output[0] == sum(program_input) and num_readings == 10 and len(output) == 1:
+            if output[0] == sum(program_input) and num_readings == 2 and len(program_input) == 10 and len(output) == 1:
                 print("inputs:", program_input)
                 print("Outputs: ", output)
                 fitness += 0
@@ -353,18 +353,6 @@ def fitness_function_11(program):
         return 8 * (value - len(program) / 10000)
 
 
-def check_for_variables(program):
-    pattern = re.compile(r'print\(([^)]+)\)')
-
-    # Find all matches in the input string
-    matches = pattern.findall(program)
-
-    # Check if there are any letters in <something> for each match
-    for match in matches:
-        if any(c.isalpha() for c in match):
-            return 0
-
-    return 20
 
 
 def benchmark1(program):
@@ -402,7 +390,7 @@ def benchmark1(program):
             visitor = ExprVisitor(20, 1, 9)
             output, program_input = visitor.visit(tree)
 
-            if output[0] == sum(program_input) and num_readings == 3 and len(output) == 1:
+            if output[0] == program_input[0] + program_input[1]/program_input[2] and num_readings == 3 and len(output) == 1:
                 print("inputs:", program_input)
                 print("Outputs: ", output)
                 fitness += 0
@@ -520,7 +508,7 @@ def visualize_fitness(generations, avg_fitness, best_fitness, stats, ex="", succ
     plt.show()
 
 
-def test(function, ex: str, filename):
+def test(function, ex: str, filename: str):
     gp = BiggerGP()
     stats = gp.evolve(function)
     gen = [stat.generation for stat in stats]
@@ -528,6 +516,18 @@ def test(function, ex: str, filename):
     avg_fit = [stat.avg_fitness for stat in stats]
     visualize_fitness(gen, avg_fit, best_fit, stats[-1].to_string(), ex, stats[-1].solved,
                       'gp/output/' + filename + '.png')
+
+def suite(functions: list, ex:str, filename:str):
+    gp = BiggerGP()
+    stats = gp.evolve(functions[0])
+    for function in functions[1:]:
+        stats = gp.evolve(function)
+    gen = [stat.generation for stat in stats]
+    best_fit = [stat.best_fitness for stat in stats]
+    avg_fit = [stat.avg_fitness for stat in stats]
+    visualize_fitness(gen, avg_fit, best_fit, stats[-1].to_string(), ex, stats[-1].solved,
+                      'gp/output/' + filename + '.png')
+
 
 
 if __name__ == '__main__':
@@ -557,9 +557,9 @@ if __name__ == '__main__':
     #test(fitness_function_9, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu "
     #                         "(jedynie) ich iloczyn. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [-9999,9999]",
     #     "1.2.E")
-    test(fitness_function_10, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
-                             " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
-         "1.3.A")
+    # test(fitness_function_10, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
+    #                          " większą z nich. Na wejściu mogą być tylko całkowite liczby dodatnie w zakresie [0,9]",
+    #      "1.3.A")
     #test(fitness_function_10, "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić na wyjściu (jedynie)"
     #                          " większą z nich. Na wejściu mogą być tylko całkowite liczby w zakresie [-9999,9999]",
     #     "1.3.B")
@@ -567,7 +567,7 @@ if __name__ == '__main__':
     #                          "jedynie) ich średnią arytmetyczną (zaokrągloną do pełnej liczby całkowitej). Na "
     #                          "wejściu mogą być tylko całkowite liczby w zakresie [-99,99]",
     #     "1.4.A")
-    # test(benchmark1, "Given an integer and a float, print their sum", "B.1")
+    #test(benchmark1, "Given an integer and a float, print their sum", "B.1")
     # test(benchmark3, "Given 4 integers, print smallest of them", "28/ C.3")
     #test(benchmark2, "Given the integer n, return the sum of squaring each integer in range[1, n]", "B.3_17")
     # test(benchmark3, "Given the integer n, return the vector of squaring each integer in range[1, n]", "B.O_1")
@@ -575,4 +575,5 @@ if __name__ == '__main__':
     #print(fitness_function_11("A = input(). \n B = input(). \n C = input(). \n P = input(). \n D = input(). \n F = "
     #                          "input(). \n G = input(). \n Z = input() .\n J = input(). \n I = input(). \n a = A + B + "
     #                          "C + D + F + G + Z + P + J + I. \n print(a). \n"))
+    # suite([fitness_function_7, benchmark1], "Given an integer and a float, print their sum", "B.1")
     pass

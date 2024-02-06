@@ -12,12 +12,12 @@ from gen.ExprVisitor import ExprVisitor
 class BiggerGP:
     """ Class executing genetic algorithm using simple custom programming language"""
 
-    def __init__(self, p_size: int = 10000, depth: int = 3, length: int = 5):
+    def __init__(self, p_size: int = 6000, depth: int = 3, length: int = 4):
         self.MAX_LEN: int = length
         self.MAX_LOGIC_LEN: int = 2
         self.POP_SIZE: int = p_size
         self.DEPTH: int = depth
-        self.GENERATIONS: int = 50
+        self.GENERATIONS: int = 70
         self.MATCH_SIZE: int = 2
         self.MUTATION_RATE: int = 10
 
@@ -384,8 +384,9 @@ class BiggerGP:
         avg_fit = self.get_average_fitness()
         return Stats(solved, generation, best_fit, self.to_string(best_indiv), avg_fit, self.POP_SIZE, self.DEPTH)
 
-    def evolve(self, fitness_f):
-        self.populate_population()
+    def evolve(self, fitness_f, populate = True):
+        if populate:
+            self.populate_population()
         for g in range(self.GENERATIONS):
             print("GENERATION ", g)
             self.calculate_pop_fitness(fitness_f)
