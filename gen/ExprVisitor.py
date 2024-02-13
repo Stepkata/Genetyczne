@@ -20,7 +20,7 @@ class Variable:
 # This class defines a complete generic visitor for a parse tree produced by ExprParser.
 class ExprVisitor(ParseTreeVisitor):
 
-    def __init__(self, max_loop_iter:int = 10, min_range: int = 5, max_range: int = 30):
+    def __init__(self, max_loop_iter:int = 10, min_range: int = 5, max_range: int = 30, input_values: List[int] = [1,2,3,4]):
         self.variables: List[Variable] = []
         self.outputs: List[int] = []
         self.inputs: List[int] = []
@@ -28,6 +28,8 @@ class ExprVisitor(ParseTreeVisitor):
         self.counter = 0
         self.min_range = min_range
         self.max_range = max_range
+        self.input_values = input_values
+        self.index = 0
 
     def findVariable(self, var_name: str) -> Tuple[bool, Union[Variable, None]]:
         """
@@ -130,8 +132,9 @@ class ExprVisitor(ParseTreeVisitor):
             values, outputs = self.visitLiterals(ctx.literals(), [], [])
             value = self.get_value(values, outputs)
         else:
-            value = random.randint(self.min_range, self.max_range)
+            value = self.input_values[self.index % len(self.input_values)]
             self.inputs.append(value)
+            self.index += 1
 
         names = [var.name for var in self.variables]
         if name in names:
@@ -140,7 +143,6 @@ class ExprVisitor(ParseTreeVisitor):
                 variable.value = value
         else:
             self.variables.append(Variable(name, value))
-        # return self.visitChildren(ctx)
 
     def visitPrint_function(self, ctx: ExprParser.Print_functionContext):
         """
@@ -162,7 +164,7 @@ class ExprVisitor(ParseTreeVisitor):
                         outputs.pop(i)
                         i -= 1
                     elif outputs[i] == "/":
-                        values[i] = values[i] / values[i + 1] if values[i + 1] != 0 else values[i] / 1
+                        values[i] = round(values[i] / values[i + 1], 2) if values[i + 1] != 0 else values[i] / 1
                         values.pop(i + 1)
                         outputs.pop(i)
                         i -= 1
