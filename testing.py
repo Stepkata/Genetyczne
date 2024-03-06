@@ -268,7 +268,7 @@ def fitness_for_10(program):
     else:
         return -1500
     split_program = program.split(".")
-    variables = [line[0] for line in split_program if "input()" in line]
+    variables = [line.strip()[0] for line in split_program if "input()" in line]
     if all(x == variables[0] for x in variables):
         value += 300
         checks += 1
@@ -319,21 +319,15 @@ def fitness_function_10(program):
     else:
         return -3000
     split_program = program.split(".")
-    variables = [line[0] for line in split_program if "input()" in line]
+    variables = [line.strip()[0] for line in split_program if "input()" in line]
     if len(variables) != 2:
-        raise ValueError("wt")
+        return -2700
     if "input()" in split_program[0] and "input()" in split_program[1]:
         value += 500
-        checks += 1
-    if any([("<" in x or ">" in x) and all([v in x for v in variables]) for x in split_program[1:]]):
-        value += 100
         checks += 1
     if any([variables[0] in x and variables[1] in x and "=" in x and "while" not in x and "if" not in x for x in
             split_program[1:]]):
         value += 500
-        checks += 1
-    if any(["print" in x for x in split_program[1:]]):
-        value += 100
         checks += 1
     if any(["print" in x and (variables[0] in x or variables[1] in x) for x in split_program[1:]]):
         value += 100
@@ -346,14 +340,13 @@ def fitness_function_10(program):
         parser = ExprParser(stream)
         tree = parser.prog()
         num_readings = program.count("input()")
-        for _ in range(15):
-            visitor = ExprVisitor(2, 0, 9)
+        for i in range(15):
+            visitor = ExprVisitor(2, 0, 9, [abs(9 - i), abs(i-6)])
             output, program_input = visitor.visit(tree)
             # print("Output: ", output)
             if output[0] == max(program_input[0], program_input[1]) and num_readings == 2 and len(
-                    output) == 1 and checks == 7:
-                print("inputs:", program_input)
-                print("Outputs: ", output)
+                    output) == 1:
+
                 fitness += 0
             elif len(output) == 1:
                 fitness += (value - len(program) / 10000)
@@ -471,9 +464,9 @@ def benchmark2(program):
     else:
         return -3000
     split_program = program.split(".")
-    variables = [line[0] for line in split_program if "input()" in line]
+    variables = [line.strip()[0] for line in split_program if "input()" in line]
     if len(variables) != 2:
-        raise ValueError("wt")
+        return -2700
     if "input()" in split_program[0] and "input()" in split_program[1]:
         value += 500
         checks += 1
@@ -714,10 +707,10 @@ def suite(functions: list, ex: str, filename: str):
         best_fit = [stat.best_fitness for stat in stats]
         avg_fit = [stat.avg_fitness for stat in stats]
         visualize_fitness(gen, avg_fit, best_fit, stats[-1].to_string(), ex, stats[-1].solved,
-                          'gp/output/' + filename + 'suite_' + str(index) + '.png')
+                          'gp/output/' + filename + 'suite_' + str(index+1) + '.png')
 
 def bool_fitness_and(program):
-    k = 10
+    k = 7
     fitness = 0
     value = -1200
     checks = 1
@@ -729,8 +722,9 @@ def bool_fitness_and(program):
         return -3600
     split_program = program.split(".")
     variables = [line.strip()[0] for line in split_program if "input()" in line]
+
     if len(set(variables)) != k:
-        return -3300
+        return -3300 + len(variables)*30
     if "if" in split_program and "&" in split_program:
         value += 400
         checks += 1
@@ -759,8 +753,53 @@ def bool_fitness_and(program):
         # print(e)
         return 8 * (value - len(program) / 10000)
 
-def bool_suite():
-    pass
+def bool_fitness_or(program):
+    k = 2
+    fitness = 0
+    value = -1200
+    checks = 1
+    inputs_count = program.count("input()")
+    if inputs_count == k:
+        value += 300
+        checks += 1
+    else:
+        return -3600
+    split_program = program.split(".")
+    variables = [line.strip()[0] for line in split_program if "input()" in line]
+
+    if len(set(variables)) != k:
+        return -3300 + len(variables)*30
+    if any(["if" in line and "||" in line for line in split_program]):
+        value += 300
+        checks += 1
+        if any(["if" in line for line in split_program]):
+            value += 100
+            checks += 1
+    if any(["print" in line for line in split_program]):
+        value += 400
+        checks += 1
+
+    tgen = TruthTableGenerator()
+    tables = tgen.or_truth_table(k)
+    try:
+        lexer = ExprLexer(InputStream(program))
+        stream = CommonTokenStream(lexer)
+        parser = ExprParser(stream)
+        tree = parser.prog()
+        for table in tables:
+            visitor = ExprVisitor(20, 1, 9, table[:-1])
+            output, program_input = visitor.visit(tree)
+            if (output[0] == table[-1] or (len(output) == 0 and table[-1] == 0)) and len(output) == 1 and len(program_input) == k:
+                fitness += 0
+            elif len(output) == 1:
+                fitness += (value - len(program) / 10000)
+            else:
+                fitness += 2 * (value - len(program) / 10000)
+        return fitness
+    except Exception as e:
+        # print(e)
+        return 8 * (value - len(program) / 10000)
+
 if __name__ == '__main__':
     # test(fitness_function_1, "Program powinien wygenerować na wyjściu (na dowolnej pozycji w danych wyjściowych) "
     #                       "liczbę 1. Poza liczbą 1 może też zwrócić inne liczby.", "1.1.A")
@@ -807,10 +846,9 @@ if __name__ == '__main__':
     #                          "input(). \n G = input(). \n Z = input() .\n J = input(). \n I = input(). \n a = A + B + "
     #                          "C + D + F + G + Z + P + J + I. \n print(a). \n"))
     # suite([fitness_function_7, benchmark1], "Given an integer and a float, print their sum", "B.1")
-    # suite([fitness_for_10, fitness_function_10, benchmark2], "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić "
+    #suite([fitness_for_10, fitness_function_10, benchmark2], "Program powinien odczytać dwie pierwsze liczy z wejścia i zwrócić "
     #                                              "na wyjściu (jedynie) większą z nich. Na wejściu mogą być tylko "
     #                                              "całkowite liczby dodatnie w zakresie [0,9]", "1.3.A")
-
     #suite([benchmark13_1, benchmark13], "Count the number of odd numbers", "B.13")
-    test(bool_fitness_and, "Funkcja boolowska AND k=3", "bool.3")
+    #test(bool_fitness_or, "Funkcja boolowska OR k=2", "bool_or.2")
     pass
